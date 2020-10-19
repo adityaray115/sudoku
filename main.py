@@ -11,5 +11,3 @@ for i in range(1,10):
         count=count+1
     i=i+1
 root.mainloop()
-
-#hello
