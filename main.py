@@ -18,6 +18,7 @@ filemenu.add_command(label="Reset This Game", command=empty)
 filemenu.add_command(label="Exit", command=root.quit)
 menubar.add_cascade(label="Options", menu=filemenu)
 root.config(menu=menubar)
+
 var=StringVar()
 for i in range(1,10):
     for j in range(1,10):
