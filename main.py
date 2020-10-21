@@ -20,6 +20,10 @@ def solveg():
 def checkg():
     messagebox.showinfo('Message','CHECK pressed.')
 
+def resetg():
+    messagebox.showwarning('Warning','Timer will not stop.')
+    ans=messagebox.askyesno('Confirm','Are you sure you want to reset?')
+
 def exitg():
     messagebox.showinfo('Message','EXIT pressed.')
 
@@ -42,15 +46,17 @@ entryname.place(x=125,y=20)
 difficulty=Label(leftframe,text='Difficulty:',bg='light blue',font=('Arial',15))
 difficulty.place(x=5,y=60)
 newgame=Button(leftframe,text='NEW GAME',bg='light green',font=('Arial',15),command=newg)
-newgame.place(x=30,y=250)
+newgame.place(x=90,y=300)
 checkgame=Button(leftframe,text='CHECK',bg='light green',font=('Arial',15),command=checkg)
-checkgame.place(x=180,y=300)
+checkgame.place(x=170,y=350)
 solvegame=Button(leftframe,text='SOLVE',bg='light green',font=('Arial',15),command=solveg)
 solvegame.place(x=50,y=350)
 savegame=Button(leftframe,text='SAVE',bg='light green',font=('Arial',15),command=saveg)
-savegame.place(x=170,y=400)
+savegame.place(x=50,y=400)
+resetgame=Button(leftframe,text='RESET',bg='light green',font=('Arial',15),command=resetg)
+resetgame.place(x=170,y=400)
 exitgame=Button(leftframe,text='EXIT',bg='light green',font=('Arial',15),command=exitg)
-exitgame.place(x=70,y=450)
+exitgame.place(x=90,y=450)
 diff=StringVar()
 diff.set('SELECT')
 diffselect=OptionMenu(leftframe,diff,'EASY','NORMAL','HARD')
