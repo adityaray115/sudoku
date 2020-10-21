@@ -9,7 +9,27 @@ root.minsize(rootwidth,rootheight)
 root.maxsize(rootwidth,rootheight)
 
 def newg():
-    messagebox.showinfo('Message','NEW GAME pressed.')
+    if entryname.get()=='' and diff.get()=='SELECT':
+        messagebox.showerror('Error','Enter name and select difficulty level.')
+    elif entryname.get()=='':
+        messagebox.showerror('Error','Name field should not be empty.')
+    elif diff.get()=='SELECT':
+        messagebox.showerror('Error','Difficulty level not selected.')
+    else:
+        messagebox.showinfo('Game','Lets Play.....'+entryname.get())
+        Label(rightframe,text=entryname.get(),bg='light blue',font=('Arial',15),fg='red').place(x=105,y=20)
+        entryname.delete(0,END)
+        entryname['state']=DISABLED
+        diffselect['state']=DISABLED
+        namelabel['state']=DISABLED
+        difficulty['state']=DISABLED
+        checkgame['state']=NORMAL
+        solvegame['state']=NORMAL
+        savegame['state']=NORMAL
+        resetgame['state']=NORMAL
+        exitgame['state']=NORMAL
+        username['state']=NORMAL
+        time['state']=NORMAL
 
 def saveg():
     messagebox.showinfo('Message','SAVE pressed.')
@@ -25,7 +45,15 @@ def resetg():
     ans=messagebox.askyesno('Confirm','Are you sure you want to reset?')
 
 def exitg():
-    messagebox.showinfo('Message','EXIT pressed.')
+    ex1=messagebox.askyesno('Warning','Any unsaved changes may be lost. Do you want to continue?')
+    if ex1==1:
+        ex2=messagebox.askyesno('Close Game','Do you want to exit the application?')
+        if ex2==1:
+            root.destroy()
+        else:
+            pass
+    else:
+        pass
 
 #Main Frame
 mainframe=Frame(root,bg='yellow')
@@ -62,6 +90,11 @@ diff.set('SELECT')
 diffselect=OptionMenu(leftframe,diff,'EASY','NORMAL','HARD')
 diffselect.config(font=('Arial',10,'italic'),fg='red')
 diffselect.place(x=100,y=60)
+checkgame['state']=DISABLED
+solvegame['state']=DISABLED
+savegame['state']=DISABLED
+resetgame['state']=DISABLED
+exitgame['state']=DISABLED
 leftframe.pack(side=LEFT,fill='y')
 
 #Details display
@@ -119,7 +152,7 @@ canvas1.create_window(230, 80, window=entry14)
 entry15 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(280, 80, window=entry15)
 
-entry23 = Entry (root,width=2,font=('arial balck',30),fg='red') 
+entry23 = Entry (root,width=2,font=('arial black',30),fg='red') 
 canvas1.create_window(180, 130, window=entry23)
 entry24 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(230, 130, window=entry24)
