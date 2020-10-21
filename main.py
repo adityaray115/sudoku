@@ -16,20 +16,7 @@ def newg():
     elif diff.get()=='SELECT':
         messagebox.showerror('Error','Difficulty level not selected.')
     else:
-        messagebox.showinfo('Game','Lets Play.....'+entryname.get())
-        Label(rightframe,text=entryname.get(),bg='light blue',font=('Arial',15),fg='red').place(x=105,y=20)
-        entryname.delete(0,END)
-        entryname['state']=DISABLED
-        diffselect['state']=DISABLED
-        namelabel['state']=DISABLED
-        difficulty['state']=DISABLED
-        checkgame['state']=NORMAL
-        solvegame['state']=NORMAL
-        savegame['state']=NORMAL
-        resetgame['state']=NORMAL
-        exitgame['state']=NORMAL
-        username['state']=NORMAL
-        time['state']=NORMAL
+        newbuttonpressed()
 
 def saveg():
     messagebox.showinfo('Message','SAVE pressed.')
@@ -51,9 +38,48 @@ def exitg():
         if ex2==1:
             root.destroy()
         else:
-            pass
+            exitbuttonpressed()
+            disname.configure(text=entryname.get())
+            diffright2.configure(text='')
+            username['state']=DISABLED
+            time['state']=DISABLED
+            diffright1['state']=DISABLED
     else:
         pass
+
+def newbuttonpressed():
+    messagebox.showinfo('Game','Lets Play.....'+entryname.get())
+    disname.configure(text=entryname.get())
+    diffright2.configure(text=diff.get())
+    entryname.delete(0,END)
+    diff.set('SELECT')
+    entryname['state']=DISABLED
+    diffselect['state']=DISABLED
+    namelabel['state']=DISABLED
+    difficulty['state']=DISABLED
+    newgame['state']=DISABLED
+    checkgame['state']=NORMAL
+    solvegame['state']=NORMAL
+    savegame['state']=NORMAL
+    resetgame['state']=NORMAL
+    exitgame['state']=NORMAL
+    username['state']=NORMAL
+    time['state']=NORMAL
+    diffright1['state']=NORMAL
+
+def exitbuttonpressed():
+    entryname['state']=NORMAL
+    entryname.configure(text='')
+    diffselect['state']=NORMAL
+    diff.set('SELECT')
+    namelabel['state']=NORMAL
+    difficulty['state']=NORMAL
+    newgame['state']=NORMAL
+    checkgame['state']=DISABLED
+    solvegame['state']=DISABLED
+    savegame['state']=DISABLED
+    resetgame['state']=DISABLED
+    exitgame['state']=DISABLED
 
 #Main Frame
 mainframe=Frame(root,bg='yellow')
@@ -90,19 +116,24 @@ diff.set('SELECT')
 diffselect=OptionMenu(leftframe,diff,'EASY','NORMAL','HARD')
 diffselect.config(font=('Arial',10,'italic'),fg='red')
 diffselect.place(x=100,y=60)
-checkgame['state']=DISABLED
-solvegame['state']=DISABLED
-savegame['state']=DISABLED
-resetgame['state']=DISABLED
-exitgame['state']=DISABLED
+exitbuttonpressed()
 leftframe.pack(side=LEFT,fill='y')
 
 #Details display
 rightframe=Frame(mainframe,bg='light blue',width=300)
 username=Label(rightframe,text='Username:',bg='light blue',font=('Arial',15))
 username.place(x=5,y=20)
+disname=Label(rightframe,bg='light blue',font=('Arial',15),fg='red')
+disname.place(x=105,y=20)
+diffright1=Label(rightframe,text='Difficulty:',bg='light blue',font=('Arial',15))
+diffright1.place(x=5,y=60)
+diffright2=Label(rightframe,bg='light blue',font=('Arial',15),fg='red')
+diffright2.place(x=90,y=60)
 time=Label(rightframe,text='Time:',bg='light blue',font=('Arial',15))
-time.place(x=5,y=60)
+time.place(x=5,y=100)
+username['state']=DISABLED
+time['state']=DISABLED
+diffright1['state']=DISABLED
 rightframe.pack(side=RIGHT,fill='y')
 
 #Play Area
@@ -136,7 +167,6 @@ canvas1.create_window(80, 130, window=entry21)
 entry22 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(130, 130, window=entry22)
 
-
 #2nd block
 entry03 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(180, 30, window=entry03)
@@ -158,7 +188,6 @@ entry24 = Entry (root,width=2,font=('arial balck',30),fg='red')
 canvas1.create_window(230, 130, window=entry24)
 entry25 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(280, 130, window=entry25)
-
 
 #3rd block
 entry06 = Entry (root,width=2,font=('arial balck',30),fg='red') 
@@ -182,8 +211,6 @@ canvas1.create_window(380, 130, window=entry27)
 entry28 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(430, 130, window=entry28)
 
-
-
 #4th block
 entry30 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(30, 180, window=entry30)
@@ -205,7 +232,6 @@ entry51 = Entry (root,width=2,font=('arial balck',30),fg='red')
 canvas1.create_window(80, 280, window=entry51)
 entry52 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(130, 280, window=entry52)
-
 
 #5th block
 entry33 = Entry (root,width=2,font=('arial balck',30),fg='red') 
@@ -229,7 +255,6 @@ canvas1.create_window(230, 280, window=entry54)
 entry55 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(280, 280, window=entry55)
 
-
 #6th block
 entry36 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(330, 180, window=entry36)
@@ -251,7 +276,6 @@ entry57 = Entry (root,width=2,font=('arial balck',30),fg='red')
 canvas1.create_window(380, 280, window=entry57)
 entry58 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(430, 280, window=entry58)
-
 
 #7th block
 entry60 = Entry (root,width=2,font=('arial balck',30),fg='red') 
@@ -275,7 +299,6 @@ canvas1.create_window(80, 430, window=entry81)
 entry82 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(130, 430, window=entry82)
 
-
 #8th block
 entry63 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(180, 330, window=entry63)
@@ -298,7 +321,6 @@ canvas1.create_window(230, 430, window=entry84)
 entry85 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(280, 430, window=entry85)
 
-
 #9th block
 entry66 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(330, 330, window=entry66)
@@ -320,9 +342,6 @@ entry87 = Entry (root,width=2,font=('arial balck',30),fg='red')
 canvas1.create_window(380, 430, window=entry87)
 entry88 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(430, 430, window=entry88)
-
-
-
 
 root.mainloop()
 
