@@ -152,7 +152,7 @@ canvas1.create_window(230, 80, window=entry14)
 entry15 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(280, 80, window=entry15)
 
-entry23 = Entry (root,width=2,font=('arial black',30),fg='red') 
+entry23 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(180, 130, window=entry23)
 entry24 = Entry (root,width=2,font=('arial balck',30),fg='red') 
 canvas1.create_window(230, 130, window=entry24)
