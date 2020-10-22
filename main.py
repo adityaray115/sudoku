@@ -146,7 +146,6 @@ canvas1.create_line(5, 155,500,155)
 canvas1.create_line(5, 305,500,305)
 
 entry = [[Entry()] * 9] * 9
-print(entry)
 x=30
 y=30
 for i in range(9):
