@@ -150,7 +150,7 @@ x=30
 y=30
 for i in range(9):
     for j in range(9):
-        entry[i][j] = Entry(canvas1,width=2,font=('arial balck',30),fg='red')
+        entry[i][j] = Entry(canvas1,width=2,font=('arial balck',30),fg='red',justify='center')
         canvas1.create_window(x+i*50,y+j*50,window=entry[i][j])
 
 root.mainloop()
