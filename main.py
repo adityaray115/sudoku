@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import messagebox
+import numpy as np
 
 root=Tk()
 root.title('SUDOKU SOLVER')
@@ -16,6 +17,9 @@ def newg():
     elif diff.get()=='SELECT':
         messagebox.showerror('Error','Difficulty level not selected.')
     else:
+        for i in range(0,9):
+            for j in range(0,9):
+                entry[i][j].delete(0,END)
         newbuttonpressed()
 
 def saveg():
@@ -30,6 +34,12 @@ def checkg():
 def resetg():
     messagebox.showwarning('Warning','Timer will not stop.')
     ans=messagebox.askyesno('Confirm','Are you sure you want to reset?')
+    if ans==1:
+        for i in range(0,9):
+            for j in range(0,9):
+                entry[i][j].delete(0,END)
+    else:
+        pass
 
 def exitg():
     ex1=messagebox.askyesno('Warning','Any unsaved changes may be lost. Do you want to continue?')
@@ -145,7 +155,7 @@ canvas1.create_line(305, 0,305,500)
 canvas1.create_line(5, 155,500,155)
 canvas1.create_line(5, 305,500,305)
 
-entry = [[Entry()] * 9] * 9
+entry=np.array([[Entry()]*9]*9)
 x=30
 y=30
 for i in range(9):
