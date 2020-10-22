@@ -119,7 +119,7 @@ savegame=Button(leftframe,text='SAVE',bg='light green',font=('Arial',15),command
 savegame.place(x=50,y=400)
 resetgame=Button(leftframe,text='RESET',bg='light green',font=('Arial',15),command=resetg)
 resetgame.place(x=170,y=400)
-exitgame=Button(leftframe,text='EXIT',bg='light green',font=('Arial',15),command=exitg)
+exitgame=Button(leftframe,text='EXIT GAME',bg='light green',font=('Arial',15),command=exitg)
 exitgame.place(x=90,y=450)
 diff=StringVar()
 diff.set('SELECT')
