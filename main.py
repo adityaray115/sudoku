@@ -11,20 +11,24 @@ root.maxsize(rootwidth,rootheight)
 
 
 ##-----------TIMER-------------------------
-counter = 0
-def counter_label(label):
-    counter = 0
+hour = minute = second = 0
+def counter_label(timer):
+    minute = 0
+    second = 0
     def count():
-        global counter
-        counter += 1
-        label.config(text = str(counter))
-        label.after(1000,count)
+        global second
+        global minute
+        global hour
+        second = second + 1
+        if second > 59:
+            minute = minute + 1
+            second = 0
+            if minute > 59:
+                hour = hour +1
+                second=0
+        timer.config(text = str(hour)+':'+str(minute)+':'+str(second))
+        timer.after(1000,count)
     count()
-root.title("counter")
-label = Label(root, fg='dark green')
-label.pack()
-counter_label(label)
-#-----------
 
 def newg():
     if entryname.get()=='' and diff.get()=='SELECT':
@@ -38,6 +42,7 @@ def newg():
             for j in range(0,9):
                 entry[i][j].delete(0,END)
         newbuttonpressed()
+        counter_label(timer)
 
 def saveg():
     messagebox.showinfo('Message','SAVE pressed.')
