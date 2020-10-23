@@ -9,6 +9,22 @@ rootheight=690
 root.minsize(rootwidth,rootheight)
 root.maxsize(rootwidth,rootheight)
 
+
+##-----------TIMER-------------------------
+counter = 0
+def counter_label(label):
+    counter = 0
+    def count():
+        global counter
+        counter += 1
+        label.config(text = str(counter))
+        label.after(1000,count)
+    count()
+root.title("counter")
+label = Label(root, fg='dark green')
+label.pack()
+counter_label(label)
+#-----------
 def newg():
     if entryname.get()=='' and diff.get()=='SELECT':
         messagebox.showerror('Error','Enter name and select difficulty level.')
