@@ -25,6 +25,7 @@ label = Label(root, fg='dark green')
 label.pack()
 counter_label(label)
 #-----------
+
 def newg():
     if entryname.get()=='' and diff.get()=='SELECT':
         messagebox.showerror('Error','Enter name and select difficulty level.')
