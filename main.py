@@ -38,9 +38,7 @@ def newg():
     elif diff.get()=='SELECT':
         messagebox.showerror('Error','Difficulty level not selected.')
     else:
-        for i in range(0,9):
-            for j in range(0,9):
-                entry[i][j].delete(0,END)
+        resetgrid(entry)
         newbuttonpressed()
         counter_label(timer)
 
@@ -57,9 +55,7 @@ def resetg():
     messagebox.showwarning('Warning','Timer will not stop.')
     ans=messagebox.askyesno('Confirm','Are you sure you want to reset?')
     if ans==1:
-        for i in range(0,9):
-            for j in range(0,9):
-                entry[i][j].delete(0,END)
+        resetgrid(entry)
     else:
         pass
 
@@ -71,6 +67,7 @@ def exitg():
             root.destroy()
         else:
             exitbuttonpressed()
+            resetgrid(entry)
             disname.configure(text=entryname.get())
             diffright2.configure(text='')
             username['state']=DISABLED
@@ -112,6 +109,11 @@ def exitbuttonpressed():
     savegame['state']=DISABLED
     resetgame['state']=DISABLED
     exitgame['state']=DISABLED
+
+def resetgrid(entry):
+    for i in range(9):
+        for j in range(9):
+            entry[i][j].delete(0,END)
 
 #Main Frame
 mainframe=Frame(root,bg='yellow')
