@@ -144,7 +144,7 @@ def resetg():
         pass
 
 def exitg():
-    ex1=messagebox.askyesno('Warning','Any unsaved changes may be lost. Do you want to continue?')
+    ex1=messagebox.askyesno('Warning','Any unsaved changes may be lost. Do you want to end the game?')
     if ex1==1:
         ex2=messagebox.askyesno('Close Game','Do you want to exit the application?')
         if ex2==1:
@@ -227,7 +227,7 @@ savegame=Button(leftframe,text='SAVE',bg='light green',font=('Arial',15),command
 savegame.place(x=50,y=400)
 resetgame=Button(leftframe,text='RESET',bg='light green',font=('Arial',15),command=resetg)
 resetgame.place(x=170,y=400)
-exitgame=Button(leftframe,text='EXIT GAME',bg='light green',font=('Arial',15),command=exitg)
+exitgame=Button(leftframe,text='END GAME',bg='light green',font=('Arial',15),command=exitg)
 exitgame.place(x=90,y=450)
 diff=StringVar()
 diff.set('SELECT')
