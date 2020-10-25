@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import messagebox
 import numpy as np
+import random
+from numpy.random.mtrand import shuffle
 
 root=Tk()
 root.title('SUDOKU SOLVER')
@@ -13,6 +15,7 @@ root.maxsize(rootwidth,rootheight)
 ##-----------TIMER-------------------------
 hour = minute = second = 0
 def counter_label(timer):
+    # global timer
     minute = 0
     second = 0
     def count():
@@ -29,8 +32,76 @@ def counter_label(timer):
         timer.config(text = str(hour)+':'+str(minute)+':'+str(second))
         timer.after(1000,count)
     count()
+#-----------
+
+grid_choices_remaining=[]
+for x in range(1,10):
+    l=[]
+    for y in range(1,10):
+        l.append(y)
+    grid_choices_remaining.append(l)
+                #  entry=np.array([[Entry()]*9]*9)
+
+
+def valid(x,y,n):
+    for i in range(0,9):
+        if entry[x][i].get()==str(n):
+            return False
+    for i in range(0,9):
+        if entry[i][y].get()==str(n):
+            return False
+    for i in range(x-x%3,x-x%3+3):
+        for j in range(y-y%3,y-y%3+3):
+            if entry[i][j].get()==str(n):
+                return False
+    return True
+
+def check_fill():
+    for i in range(9):
+        for j in range(9):
+            if(entry[i][j].get()==''):
+                return False
+    return True
+
+numberlist=list(range(1,10))
+
+
+def fillGrid():
+    #   global counter
+  #Find next empty cell
+  for i in range(0,81):
+    row=i//9
+    col=i%9
+    if entry[row][col].get()=='':
+      shuffle(numberlist)      
+      for value in numberlist:
+        value=str(value)
+        #Check that this value has not already be used on this row
+        if not value in (entry[row][0].get(),entry[row][1].get(),entry[row][2].get(),entry[row][3].get(),entry[row][4].get(),entry[row][5].get(),entry[row][6].get(),entry[row][7].get(),entry[row][8].get()):
+            if not value in (entry[0][col].get(),entry[1][col].get(),entry[2][col].get(),entry[3][col].get(),entry[4][col].get(),entry[5][col].get(),entry[6][col].get(),entry[7][col].get(),entry[8][col].get()):
+                #Identify which of the 9 squares we are working on
+                square=[]
+                l=[]
+                for i in range(row-row%3,row-row%3+3):
+                    for j in range(col-col%3,col-col%3+3):
+                        l.append(entry[i][j].get())
+                #Check that this value has not already be used on this 3x3 square
+                if not value in l:
+                    entry[row][col].delete(0,END)
+                    entry[row][col].insert(0,str(value))
+                    if check_fill():
+                        return True
+                    else:
+                        if fillGrid():
+                            return True
+            
+      break
+  entry[row][col].delete(0,END)        
+  entry[row][col].insert(0,str(''))
+
 
 def newg():
+    global timer
     if entryname.get()=='' and diff.get()=='SELECT':
         messagebox.showerror('Error','Enter name and select difficulty level.')
     elif entryname.get()=='':
@@ -41,9 +112,22 @@ def newg():
         resetgrid(entry)
         newbuttonpressed()
         counter_label(timer)
+        fillGrid()
+        count=0
+        if diff.get()=='EASY':count=40
+        elif diff.get()=='NORMAL':count=50
+        elif diff.get()=='HARD':count=60
+        print(diff.get())
+        while count>0:
+            row=random.randint(0,8)
+            col=random.randint(0,8)
+            if not entry[row][col].get()=='':
+                entry[row][col].delete(0,END)
+                entry[row][col].insert(0,str(''))
+                count-=1
 
 def saveg():
-    messagebox.showinfo('Message','SAVE pressed.')
+    messagebox.showinfo('Message','SAVE pressed.')    
 
 def solveg():
     messagebox.showinfo('Message','SOLVE pressed.')
@@ -81,7 +165,7 @@ def newbuttonpressed():
     disname.configure(text=entryname.get())
     diffright2.configure(text=diff.get())
     entryname.delete(0,END)
-    diff.set('SELECT')
+    # diff.set('SELECT')
     entryname['state']=DISABLED
     diffselect['state']=DISABLED
     namelabel['state']=DISABLED
@@ -175,7 +259,6 @@ rightframe.pack(side=RIGHT,fill='y')
 #Play Area
 canvas1 = Canvas(mainframe, width = 455, height = 455)
 canvas1.pack(pady=44)
-
 canvas1.create_line(155, 0,155,500)
 canvas1.create_line(305, 0,305,500)
 canvas1.create_line(5, 155,500,155)
