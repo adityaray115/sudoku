@@ -3,6 +3,8 @@ from tkinter import messagebox
 import numpy as np
 import random
 from numpy.random.mtrand import shuffle
+import sys
+# sys.setrecursionlimit(5000)
 
 root=Tk()
 root.title('SUDOKU SOLVER')
@@ -56,7 +58,6 @@ def check_fill():
 
 numberlist=list(range(1,10))
 
-
 def fillGrid():
     #   global counter
   #Find next empty cell
@@ -83,7 +84,6 @@ def fillGrid():
                     else:
                         if fillGrid():
                             return True
-            
       break
   entry[row][col].delete(0,END)        
   entry[row][col].insert(0,str(''))
@@ -136,6 +136,9 @@ def newg():
         newbuttonpressed()
         counter_label(timer)
         fillGrid()
+        for row in range(9):
+            for col in range(9):
+                entry[row][col].configure(state='readonly')
         count=0
         if diff.get()=='EASY':count=40
         elif diff.get()=='NORMAL':count=50
@@ -149,6 +152,7 @@ def newg():
                 row = random.randint(0,8)
                 col = random.randint(0,8)
             #Remember its cell value in case we need to put it back  
+            entry[row][col].configure(state='normal')
             backup = entry[row][col].get()
             entry[row][col].delete(0,END)
             
@@ -330,7 +334,7 @@ for i in range(9):
         canvas1.create_window(x+i*50,y+j*50,window=entry[i][j])
 
 root.mainloop()
-
+input('')
 
 #Aniket's Play Area using 
 # gridframe=Frame(mainframe,bg='blue')
