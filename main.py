@@ -3,6 +3,8 @@ from tkinter import messagebox
 import numpy as np
 import random
 from numpy.random.mtrand import shuffle
+import sys
+# sys.setrecursionlimit(5000)
 
 root=Tk()
 root.title('SUDOKU SOLVER')
@@ -10,7 +12,7 @@ rootwidth=1150
 rootheight=690
 root.minsize(rootwidth,rootheight)
 root.maxsize(rootwidth,rootheight)
-
+counter =1
 
 ##-----------TIMER-------------------------
 hour = minute = second = 0
@@ -34,15 +36,6 @@ def counter_label(timer):
     count()
 #-----------
 
-grid_choices_remaining=[]
-for x in range(1,10):
-    l=[]
-    for y in range(1,10):
-        l.append(y)
-    grid_choices_remaining.append(l)
-                #  entry=np.array([[Entry()]*9]*9)
-
-
 def valid(x,y,n):
     for i in range(0,9):
         if entry[x][i].get()==str(n):
@@ -65,7 +58,6 @@ def check_fill():
 
 numberlist=list(range(1,10))
 
-
 def fillGrid():
     #   global counter
   #Find next empty cell
@@ -73,7 +65,36 @@ def fillGrid():
     row=i//9
     col=i%9
     if entry[row][col].get()=='':
-      shuffle(numberlist)      
+    #   shuffle(numberlist)      
+      for value in numberlist:
+        value=str(value)
+        #Check that this value has not already be used on this row
+        if not value in (entry[row][0].get(),entry[row][1].get(),entry[row][2].get(),entry[row][3].get(),entry[row][4].get(),entry[row][5].get(),entry[row][6].get(),entry[row][7].get(),entry[row][8].get()):
+            if not value in (entry[0][col].get(),entry[1][col].get(),entry[2][col].get(),entry[3][col].get(),entry[4][col].get(),entry[5][col].get(),entry[6][col].get(),entry[7][col].get(),entry[8][col].get()):
+                l=[]
+                for i in range(row-row%3,row-row%3+3):
+                    for j in range(col-col%3,col-col%3+3):
+                        l.append(entry[i][j].get())
+                #Check that this value has not already be used on this 3x3 square
+                if not value in l:
+                    entry[row][col].delete(0,END)
+                    entry[row][col].insert(0,str(value))
+                    if check_fill():
+                        return True
+                    else:
+                        if fillGrid():
+                            return True
+      break
+  entry[row][col].delete(0,END)        
+  entry[row][col].insert(0,str(''))
+
+def solveGrid():
+  global counter
+  #Find next empty cell
+  for i in range(0,81):
+    row=i//9
+    col=i%9
+    if entry[row][col].get()=='':
       for value in numberlist:
         value=str(value)
         #Check that this value has not already be used on this row
@@ -90,6 +111,8 @@ def fillGrid():
                     entry[row][col].delete(0,END)
                     entry[row][col].insert(0,str(value))
                     if check_fill():
+                        counter+=1
+                        break
                         return True
                     else:
                         if fillGrid():
@@ -99,9 +122,9 @@ def fillGrid():
   entry[row][col].delete(0,END)        
   entry[row][col].insert(0,str(''))
 
-
 def newg():
     global timer
+    global counter
     if entryname.get()=='' and diff.get()=='SELECT':
         messagebox.showerror('Error','Enter name and select difficulty level.')
     elif entryname.get()=='':
@@ -113,10 +136,48 @@ def newg():
         newbuttonpressed()
         counter_label(timer)
         fillGrid()
+        for row in range(9):
+            for col in range(9):
+                entry[row][col].configure(state='readonly')
         count=0
         if diff.get()=='EASY':count=40
         elif diff.get()=='NORMAL':count=50
         elif diff.get()=='HARD':count=60
+        counter=1
+        while count>0:
+            # Select a random cell that is not already empty
+            row = random.randint(0,8)
+            col = random.randint(0,8)
+            while entry[row][col].get()=='':
+                row = random.randint(0,8)
+                col = random.randint(0,8)
+            #Remember its cell value in case we need to put it back  
+            entry[row][col].configure(state='normal')
+            backup = entry[row][col].get()
+            entry[row][col].delete(0,END)
+            
+            #Take a full copy of the grid
+            gridcopy=[]
+            l=[]
+            for i in range(0,9):
+                l=[]
+                for j in range(0,9):
+                    l.append(entry[i][j].get())
+                gridcopy.append(l)
+
+            #Count the number of solutions that this grid has (using a backtracking approach implemented in the solveGrid() function)
+            counter=0
+            solveGrid()   
+            #If the number of solution is different from 1 then we need to cancel the change by putting the value we took away back in the grid
+            if counter!=1:
+                entry[row][col].delete(0,END)
+                entry[row][col].insert(0,str(backup))
+                #We could stop here, but we can also have another attempt with a different cell just to try to remove more numbers
+                count -= 1
+            for i in range(0,9):
+                for j in range(0,9):
+                    entry[i][j].delete(0,END)
+                    entry[i][j].insert(0,str(gridcopy[i][j]))
         print(diff.get())
         while count>0:
             row=random.randint(0,8)
@@ -130,7 +191,7 @@ def saveg():
     messagebox.showinfo('Message','SAVE pressed.')    
 
 def solveg():
-    messagebox.showinfo('Message','SOLVE pressed.')
+    fillGrid()
 
 def checkg():
     messagebox.showinfo('Message','CHECK pressed.')
@@ -273,7 +334,7 @@ for i in range(9):
         canvas1.create_window(x+i*50,y+j*50,window=entry[i][j])
 
 root.mainloop()
-
+input('')
 
 #Aniket's Play Area using 
 # gridframe=Frame(mainframe,bg='blue')
