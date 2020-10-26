@@ -34,7 +34,6 @@ def counter_label(timer):
     count()
 #-----------
 
-
 def valid(x,y,n):
     for i in range(0,9):
         if entry[x][i].get()==str(n):
@@ -56,6 +55,7 @@ def check_fill():
     return True
 
 numberlist=list(range(1,10))
+
 
 def fillGrid():
     #   global counter
@@ -113,6 +113,7 @@ def solveGrid():
                     if check_fill():
                         counter+=1
                         break
+                        return True
                     else:
                         if fillGrid():
                             return True
@@ -139,14 +140,6 @@ def newg():
         if diff.get()=='EASY':count=40
         elif diff.get()=='NORMAL':count=50
         elif diff.get()=='HARD':count=60
-        # while count>0
-        #     row=random.randint(0,8)
-        #     col=random.randint(0,8)
-        #     if not entry[row][col].get()=='':
-        #         entry[row][col].delete(0,END)
-        #         entry[row][col].insert(0,str(''))
-        #         count-=1
-
         counter=1
         while count>0:
             # Select a random cell that is not already empty
@@ -181,6 +174,14 @@ def newg():
                 for j in range(0,9):
                     entry[i][j].delete(0,END)
                     entry[i][j].insert(0,str(gridcopy[i][j]))
+        print(diff.get())
+        while count>0:
+            row=random.randint(0,8)
+            col=random.randint(0,8)
+            if not entry[row][col].get()=='':
+                entry[row][col].delete(0,END)
+                entry[row][col].insert(0,str(''))
+                count-=1
 
 def saveg():
     messagebox.showinfo('Message','SAVE pressed.')    
