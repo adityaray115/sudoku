@@ -13,29 +13,6 @@ rootheight=690
 root.minsize(rootwidth,rootheight)
 root.maxsize(rootwidth,rootheight)
 counter =1
-
-##-----------TIMER-------------------------
-hour = minute = second = 0
-def counter_label(timer):
-    # global timer
-    minute = 0
-    second = 0
-    def count():
-        global second
-        global minute
-        global hour
-        second = second + 1
-        if second > 59:
-            minute = minute + 1
-            second = 0
-            if minute > 59:
-                hour = hour +1
-                second=0
-        timer.config(text = str(hour)+':'+str(minute)+':'+str(second))
-        timer.after(1000,count)
-    count()
-#-----------
-
 def valid(x,y,n):
     for i in range(0,9):
         if entry[x][i].get()==str(n):
@@ -260,35 +237,38 @@ def resetgrid(entry):
         for j in range(9):
             entry[i][j].delete(0,END)
 
+
 #Main Frame
-mainframe=Frame(root,bg='yellow')
+mainframe=Frame(root,bg='#FEE134')
 mainframe.pack(expand=True,fill='both')
 
+
+
 #Title of the Application
-titleframe=Frame(mainframe,bg='green')
-title=Label(titleframe,text='SUDOKU',font=('arial black',70,'bold','underline'),fg='red',bg='green')
+titleframe=Frame(mainframe,bg='#FEE134')
+title=Label(titleframe,text='SUDOKU',font=('Montserrat',70),fg='black',bg='#FEE134')
 title.pack()
 titleframe.pack(anchor=N,fill='x')
 
 #Interaction Area for User
-leftframe=Frame(mainframe,bg='light blue',width=300)
-namelabel=Label(leftframe,text='Enter Name:',bg='light blue',font=('Arial',15))
+leftframe=Frame(mainframe,bg='#F55E55',width=300)
+namelabel=Label(leftframe,text='NAME:',bg='#F55E55',font=('Arial',15))
 namelabel.place(x=5,y=20)
 entryname=Entry(leftframe,width=15,font=('Arial',15),fg='red')
 entryname.place(x=125,y=20)
-difficulty=Label(leftframe,text='Difficulty:',bg='light blue',font=('Arial',15))
+difficulty=Label(leftframe,text='LEVEL:',bg='#F55E55',font=('Arial',15))
 difficulty.place(x=5,y=60)
-newgame=Button(leftframe,text='NEW GAME',bg='light green',font=('Arial',15),command=newg)
+newgame=Button(leftframe,text='NEW GAME',fg='black',bg='#FEE134',font=('Arial',15),command=newg)
 newgame.place(x=90,y=300)
-checkgame=Button(leftframe,text='CHECK',bg='light green',font=('Arial',15),command=checkg)
+checkgame=Button(leftframe,text='CHECK',fg='black',bg='#FEE134',font=('Arial',15),command=checkg)
 checkgame.place(x=170,y=350)
-solvegame=Button(leftframe,text='SOLVE',bg='light green',font=('Arial',15),command=solveg)
+solvegame=Button(leftframe,text='SOLVE',fg='black',bg='#FEE134',font=('Arial',15),command=solveg)
 solvegame.place(x=50,y=350)
-savegame=Button(leftframe,text='SAVE',bg='light green',font=('Arial',15),command=saveg)
+savegame=Button(leftframe,text='SAVE',fg='black',bg='#FEE134',font=('Arial',15),command=saveg)
 savegame.place(x=50,y=400)
-resetgame=Button(leftframe,text='RESET',bg='light green',font=('Arial',15),command=resetg)
+resetgame=Button(leftframe,text='RESET',fg='black',bg='#FEE134',font=('Arial',15),command=resetg)
 resetgame.place(x=170,y=400)
-exitgame=Button(leftframe,text='END GAME',bg='light green',font=('Arial',15),command=exitg)
+exitgame=Button(leftframe,text='EXIT GAME',fg='black',bg='#FEE134',font=('Arial',15),command=exitg)
 exitgame.place(x=90,y=450)
 diff=StringVar()
 diff.set('SELECT')
@@ -298,24 +278,52 @@ diffselect.place(x=100,y=60)
 exitbuttonpressed()
 leftframe.pack(side=LEFT,fill='y')
 
+
 #Details display
-rightframe=Frame(mainframe,bg='light blue',width=300)
-username=Label(rightframe,text='Username:',bg='light blue',font=('Arial',15))
+rightframe=Frame(mainframe,bg='#F55E55',width=300)
+username=Label(rightframe,text='UERNAME:',fg='black', bg='#F55E55',font=('Arial',15))
 username.place(x=5,y=20)
-disname=Label(rightframe,bg='light blue',font=('Arial',15),fg='red')
+disname=Label(rightframe,bg='#F55E55',font=('Arial',15),fg='red')
 disname.place(x=105,y=20)
-diffright1=Label(rightframe,text='Difficulty:',bg='light blue',font=('Arial',15))
+diffright1=Label(rightframe,text='Difficulty:',bg='#F55E55',font=('Arial',15))
 diffright1.place(x=5,y=60)
-diffright2=Label(rightframe,bg='light blue',font=('Arial',15),fg='red')
+diffright2=Label(rightframe,bg='#F55E55',font=('Arial',15),fg='red')
 diffright2.place(x=90,y=60)
-time=Label(rightframe,text='Time:',bg='light blue',font=('Arial',15))
+time=Label(rightframe,text='Time:',bg='#F55E55',fg='black',font=('Arial',15))
 time.place(x=5,y=100)
-timer=Label(rightframe,bg='light blue',font=('Arial',15),fg='red')
-timer.place(x=70,y=100)
 username['state']=DISABLED
 time['state']=DISABLED
 diffright1['state']=DISABLED
 rightframe.pack(side=RIGHT,fill='y')
+
+
+
+##-----------TIMER-------------------------
+
+hour = minute = second = 0
+def counter_label(timer):
+    minute = 0
+    second = 0
+    def count():
+        global second
+        global minute
+        global hour
+        second = second + 1
+        if second > 59:
+            minute = minute + 1
+            second = 0
+            if minute > 59:
+                hour = hour +1
+                second=0
+        timer.config(text = str(hour)+':'+str(minute)+':'+str(second))
+        timer.after(1000,count)
+    count()
+
+    
+timer = Label(rightframe,bg='#F55E55',font=('Arial',15),fg='white')
+timer.place(x=80,y=100)
+counter_label(timer)
+#----------------------------
 
 #Play Area
 canvas1 = Canvas(mainframe, width = 455, height = 455)
@@ -367,3 +375,4 @@ filemenu.add_command(label="Exit", command=root.quit)
 menubar.add_cascade(label="Options", menu=filemenu)
 root.config(menu=menubar)
 var=StringVar()'''
+s
