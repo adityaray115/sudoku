@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import messagebox
 import numpy as np
+import random
+from numpy.random.mtrand import shuffle
 
 root=Tk()
 root.title('SUDOKU SOLVER')
@@ -11,24 +13,27 @@ root.maxsize(rootwidth,rootheight)
 counter =1
 
 ##-----------TIMER-------------------------
-counter = 0
-def counter_label(label):
-    counter = 0
+hour = minute = second = 0
+def counter_label(timer):
+    # global timer
+    minute = 0
+    second = 0
     def count():
-        global counter
-        counter += 1
-        label.config(text = str(counter))
-        label.after(1000,count)
+        global second
+        global minute
+        global hour
+        second = second + 1
+        if second > 59:
+            minute = minute + 1
+            second = 0
+            if minute > 59:
+                hour = hour +1
+                second=0
+        timer.config(text = str(hour)+':'+str(minute)+':'+str(second))
+        timer.after(1000,count)
     count()
-root.title("counter")
-label = Label(root, fg='dark green')
-label.pack()
-counter_label(label)
 #-----------
 
-<<<<<<< Updated upstream
-def newg():
-=======
 
 def valid(x,y,n):
     for i in range(0,9):
@@ -119,7 +124,6 @@ def solveGrid():
 def newg():
     global timer
     global counter
->>>>>>> Stashed changes
     if entryname.get()=='' and diff.get()=='SELECT':
         messagebox.showerror('Error','Enter name and select difficulty level.')
     elif entryname.get()=='':
@@ -127,12 +131,8 @@ def newg():
     elif diff.get()=='SELECT':
         messagebox.showerror('Error','Difficulty level not selected.')
     else:
-        for i in range(0,9):
-            for j in range(0,9):
-                entry[i][j].delete(0,END)
+        resetgrid(entry)
         newbuttonpressed()
-<<<<<<< Updated upstream
-=======
         counter_label(timer)
         fillGrid()
         count=0
@@ -181,10 +181,9 @@ def newg():
                 for j in range(0,9):
                     entry[i][j].delete(0,END)
                     entry[i][j].insert(0,str(gridcopy[i][j]))
->>>>>>> Stashed changes
 
 def saveg():
-    messagebox.showinfo('Message','SAVE pressed.')
+    messagebox.showinfo('Message','SAVE pressed.')    
 
 def solveg():
     fillGrid()
@@ -196,20 +195,19 @@ def resetg():
     messagebox.showwarning('Warning','Timer will not stop.')
     ans=messagebox.askyesno('Confirm','Are you sure you want to reset?')
     if ans==1:
-        for i in range(0,9):
-            for j in range(0,9):
-                entry[i][j].delete(0,END)
+        resetgrid(entry)
     else:
         pass
 
 def exitg():
-    ex1=messagebox.askyesno('Warning','Any unsaved changes may be lost. Do you want to continue?')
+    ex1=messagebox.askyesno('Warning','Any unsaved changes may be lost. Do you want to end the game?')
     if ex1==1:
         ex2=messagebox.askyesno('Close Game','Do you want to exit the application?')
         if ex2==1:
             root.destroy()
         else:
             exitbuttonpressed()
+            resetgrid(entry)
             disname.configure(text=entryname.get())
             diffright2.configure(text='')
             username['state']=DISABLED
@@ -223,7 +221,7 @@ def newbuttonpressed():
     disname.configure(text=entryname.get())
     diffright2.configure(text=diff.get())
     entryname.delete(0,END)
-    diff.set('SELECT')
+    # diff.set('SELECT')
     entryname['state']=DISABLED
     diffselect['state']=DISABLED
     namelabel['state']=DISABLED
@@ -251,6 +249,11 @@ def exitbuttonpressed():
     savegame['state']=DISABLED
     resetgame['state']=DISABLED
     exitgame['state']=DISABLED
+
+def resetgrid(entry):
+    for i in range(9):
+        for j in range(9):
+            entry[i][j].delete(0,END)
 
 #Main Frame
 mainframe=Frame(root,bg='yellow')
@@ -280,7 +283,7 @@ savegame=Button(leftframe,text='SAVE',bg='light green',font=('Arial',15),command
 savegame.place(x=50,y=400)
 resetgame=Button(leftframe,text='RESET',bg='light green',font=('Arial',15),command=resetg)
 resetgame.place(x=170,y=400)
-exitgame=Button(leftframe,text='EXIT GAME',bg='light green',font=('Arial',15),command=exitg)
+exitgame=Button(leftframe,text='END GAME',bg='light green',font=('Arial',15),command=exitg)
 exitgame.place(x=90,y=450)
 diff=StringVar()
 diff.set('SELECT')
@@ -302,6 +305,8 @@ diffright2=Label(rightframe,bg='light blue',font=('Arial',15),fg='red')
 diffright2.place(x=90,y=60)
 time=Label(rightframe,text='Time:',bg='light blue',font=('Arial',15))
 time.place(x=5,y=100)
+timer=Label(rightframe,bg='light blue',font=('Arial',15),fg='red')
+timer.place(x=70,y=100)
 username['state']=DISABLED
 time['state']=DISABLED
 diffright1['state']=DISABLED
@@ -310,7 +315,6 @@ rightframe.pack(side=RIGHT,fill='y')
 #Play Area
 canvas1 = Canvas(mainframe, width = 455, height = 455)
 canvas1.pack(pady=44)
-
 canvas1.create_line(155, 0,155,500)
 canvas1.create_line(305, 0,305,500)
 canvas1.create_line(5, 155,500,155)
