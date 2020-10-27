@@ -3,9 +3,7 @@ from tkinter import messagebox
 import numpy as np
 import random
 from numpy.random.mtrand import shuffle
-import sys
 import mysql.connector
-# sys.setrecursionlimit(5000)
 
 root=Tk()
 root.title('SUDOKU SOLVER')
@@ -195,7 +193,6 @@ def newg():
                 for j in range(0,9):
                     l.append(entry[i][j].get())
                 gridcopy.append(l)
-
             #Count the number of solutions that this grid has (using a backtracking approach implemented in the solveGrid() function)
             counter=0
             solveGrid()   
@@ -229,11 +226,36 @@ def saveg():
     obj.execute(sql,var)
     obj.execute('commit;')
     messagebox.showinfo('Saved','Your record has been saved.') 
+    for row in range(9):
+        for col in range(9):
+            if entry[row][col].cget('state')=='readonly':
+                mydb = mysql.connector.connect(
+                    host="localhost",
+                    user="root",
+                    passwd="1234"
+                )
+                my_courser = mydb.cursor()
+                my_courser.execute("drop database if exists COLLEGE")
+                my_courser.execute("create database COLLEGE")
+                my_courser.execute("use college")
+                my_courser.execute("drop table if exists student")
+                my_courser.execute("CREATE TABLE STUDENT(First_NAME VARCHAR(70),Last_NAME VARCHAR(70),Address VARCHAR(70),City VARCHAR(70),AGE INTEGER(3));")
+                my_courser.execute("insert into student values('Mickey','Mouse','123 Fantasy Way','Anaheim',73)")
+                my_courser.execute("insert into student values('Bat','Man','321 Cavern Ave','Gotham',54)")
+                my_courser.execute("insert into student values('Wonder','Woman','987 Truth Way','Paradise',39)")
+                print("Done")
+                my_courser.execute("SELECT * FROM STUDENT")
+                for x in my_courser:
+                    print(x)
 
 def solveg():
+    for row in range(9):
+        for col in range(9):
+            if entry[row][col].cget('state')=='normal':
+                entry[row][col].delete(0,END)
+                entry[row][col].insert(0,'')
     fillGrid()
     resetgame['state']=DISABLED
-    #checkgame['state']=DISABLED
     solvegame['state']=DISABLED
 
 def checkg():
@@ -317,6 +339,7 @@ def resetgrid(entry):
     for i in range(9):
         for j in range(9):
             entry[i][j].delete(0,END)
+            entry[i][j].configure(state='normal')
 
 #Main Frame
 mainframe=Frame(root,bg='yellow')
