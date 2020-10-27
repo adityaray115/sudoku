@@ -4,6 +4,7 @@ import numpy as np
 import random
 from numpy.random.mtrand import shuffle
 import sys
+import mysql.connector
 # sys.setrecursionlimit(5000)
 
 root=Tk()
@@ -14,16 +15,27 @@ root.minsize(rootwidth,rootheight)
 root.maxsize(rootwidth,rootheight)
 counter =1
 
-##-----------TIMER-------------------------
+#variables
+counter =1
+name=''
+d=''
+tot_time='0:0:0'
+fillgridcheck=0
+numberlist=list(range(1,10))
+numlist=['1','2','3','4','5','6','7','8','9','']
+
+#-----------TIMER-------------------------
 hour = minute = second = 0
 def counter_label(timer):
-    # global timer
+    #global timer
     minute = 0
     second = 0
     def count():
         global second
         global minute
         global hour
+        global fillgridcheck
+        global tot_time
         second = second + 1
         if second > 59:
             minute = minute + 1
@@ -31,6 +43,12 @@ def counter_label(timer):
             if minute > 59:
                 hour = hour +1
                 second=0
+        if fillgridcheck==1:
+            tot_time=str(hour)+':'+str(minute)+':'+str(second)
+            hour = minute = second = 0
+            fillgridcheck=0
+            messagebox.showinfo('Message','Game comlpeted.')    
+            return
         timer.config(text = str(hour)+':'+str(minute)+':'+str(second))
         timer.after(1000,count)
     count()
@@ -46,6 +64,19 @@ def valid(x,y,n):
     for i in range(x-x%3,x-x%3+3):
         for j in range(y-y%3,y-y%3+3):
             if entry[i][j].get()==str(n):
+                return False
+    return True
+
+def valid2(x,y,n):
+    for i in range(0,9):
+        if entry[x][i].get()==str(n) and y!=i:
+            return False
+    for i in range(0,9):
+        if entry[i][y].get()==str(n) and x!=i:
+            return False
+    for i in range(x-x%3,x-x%3+3):
+        for j in range(y-y%3,y-y%3+3):
+            if entry[i][j].get()==str(n) and x!=i and y!=j:
                 return False
     return True
 
@@ -188,13 +219,40 @@ def newg():
                 count-=1
 
 def saveg():
-    messagebox.showinfo('Message','SAVE pressed.')    
+    global name
+    global tot_time
+    global d
+    sud=mysql.connector.connect(host='localhost',username='root',passwd='',database='')
+    obj=sud.cursor()
+    sql='insert into sudoku values(%s,%s,%s);'
+    var=(name,tot_time,d)
+    obj.execute(sql,var)
+    obj.execute('commit;')
+    messagebox.showinfo('Saved','Your record has been saved.') 
 
 def solveg():
     fillGrid()
+    resetgame['state']=DISABLED
+    #checkgame['state']=DISABLED
+    solvegame['state']=DISABLED
 
 def checkg():
-    messagebox.showinfo('Message','CHECK pressed.')
+    global fillgridcheck
+    for i in range(9):
+        for j in range(9):
+            num=entry[i][j].get()
+            if(num not in numlist):
+                messagebox.showerror('Error','Invalid entries are present.')
+                return
+            if(num==''):
+                messagebox.showwarning('Warning','Empty spaces are present.')
+                return
+            for row in range(9):
+                for col in range(9):
+                    if not valid2(row,col,entry[row][col].get()):
+                        messagebox.showerror('Error','Number is repeated')
+                        return                   
+    fillgridcheck=1
 
 def resetg():
     messagebox.showwarning('Warning','Timer will not stop.')
