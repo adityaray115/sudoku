@@ -206,14 +206,7 @@ def newg():
                 for j in range(0,9):
                     entry[i][j].delete(0,END)
                     entry[i][j].insert(0,str(gridcopy[i][j]))
-        print(diff.get())
-        while count>0:
-            row=random.randint(0,8)
-            col=random.randint(0,8)
-            if not entry[row][col].get()=='':
-                entry[row][col].delete(0,END)
-                entry[row][col].insert(0,str(''))
-                count-=1
+        
 
 def saveg():
     global name
@@ -282,7 +275,11 @@ def resetg():
     if ans==1:
         resetgrid(entry)
     else:
-        pass
+        for row in range(9):
+            for col in range(9):
+                if entry[row][col].cget('state')=='normal':
+                    entry[row][col].delete(0,END)
+                    entry[row][col].insert(0,'')
 
 def exitg():
     ex1=messagebox.askyesno('Warning','Any unsaved changes may be lost. Do you want to end the game?')
