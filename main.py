@@ -335,8 +335,8 @@ def exitbuttonpressed():
 def resetgrid(entry):
     for i in range(9):
         for j in range(9):
-            entry[i][j].delete(0,END)
             entry[i][j].configure(state='normal')
+            entry[i][j].delete(0,END)
 
 #Main Frame
 mainframe=Frame(root,bg='yellow')
