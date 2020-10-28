@@ -333,6 +333,7 @@ def exitg():
             resetgrid(entry)
             disname.configure(text=entryname.get())
             diffright2.configure(text='')
+            timer.config(text='')
             username['state']=DISABLED
             time['state']=DISABLED
             diffright1['state']=DISABLED
