@@ -24,30 +24,70 @@ numlist=['1','2','3','4','5','6','7','8','9','']
 
 #-----------TIMER-------------------------
 hour = minute = second = 0
+h = m = s = 0
 def counter_label(timer):
     #global timer
-    minute = 0
-    second = 0
+    hour = minute = second = 0
+    h = m = s = 0
     def count():
-        global second
-        global minute
-        global hour
+        global s,m,h
+        global second,minute,hour
         global fillgridcheck
         global tot_time
         second = second + 1
+        if second < 10:
+            s = 1
+        if minute < 10:
+            m = 1
+        if hour < 10:
+            h = 1
         if second > 59:
             minute = minute + 1
             second = 0
             if minute > 59:
                 hour = hour +1
-                second=0
+                second = 0
+                minute = 0
+                if hour > 23:
+                    fillgridcheck = 1
+                    messagebox.showinfo('Message','One day completed')
         if fillgridcheck==1:
-            tot_time=str(hour)+':'+str(minute)+':'+str(second)
+            #tot_time=str(hour)+':'+str(minute)+':'+str(second)
             hour = minute = second = 0
             fillgridcheck=0
-            messagebox.showinfo('Message','Game comlpeted.')    
+            messagebox.showinfo('Message','Game completed.')    
             return
-        timer.config(text = str(hour)+':'+str(minute)+':'+str(second))
+        if(s==1 and m==1 and h==1):
+            timer.config(text = '0'+str(hour)+':'+'0'+str(minute)+':'+'0'+str(second))
+            tot_time = '0'+str(hour)+':'+'0'+str(minute)+':'+'0'+str(second)
+            h= m = s = 0
+        elif(s==0 and m==1 and h==1):
+            timer.config(text = '0'+str(hour)+':'+'0'+str(minute)+':'+str(second))
+            tot_time = '0'+str(hour)+':'+'0'+str(minute)+':'+str(second)
+            h = m = 0
+        elif(s==1 and m==0 and h==1):
+            timer.config(text = '0'+str(hour)+':'+str(minute)+':'+'0'+str(second))
+            tot_time = '0'+str(hour)+':'+str(minute)+':'+'0'+str(second)
+            h = s = 0
+        elif(s==0 and m==0 and h==1):
+            timer.config(text = '0'+str(hour)+':'+str(minute)+':'+str(second))
+            tot_time = '0'+str(hour)+':'+str(minute)+':'+str(second)
+            h = 0
+        elif(s==1 and m==1 and h==0):
+            timer.config(text = str(hour)+':'+'0'+str(minute)+':'+'0'+str(second))
+            tot_time = str(hour)+':'+'0'+str(minute)+':'+'0'+str(second)
+            m = s = 0
+        elif(s==0 and m==1 and h==0):
+            timer.config(text = str(hour)+':'+'0'+str(minute)+':'+str(second))
+            tot_time = str(hour)+':'+'0'+str(minute)+':'+str(second)
+            m =0
+        elif(s==1 and m==0 and h==0):
+            timer.config(text = str(hour)+':'+str(minute)+':'+'0'+str(second))
+            tot_time = str(hour)+':'+str(minute)+':'+'0'+str(second)
+            s = 0
+        else:
+            timer.config(text = str(hour)+':'+str(minute)+':'+str(second))
+            tot_time = str(hour)+':'+str(minute)+':'+str(second)
         timer.after(1000,count)
     count()
 #-----------
