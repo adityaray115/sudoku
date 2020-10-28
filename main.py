@@ -282,13 +282,16 @@ def saveg():
                     print(x)
 
 def solveg():
+    global fillgridcheck
     for row in range(9):
         for col in range(9):
             if entry[row][col].cget('state')=='normal':
                 entry[row][col].delete(0,END)
                 entry[row][col].insert(0,'')
     fillGrid()
+    fillgridcheck = 1
     resetgame['state']=DISABLED
+    checkgame['state']=DISABLED
     solvegame['state']=DISABLED
 
 def checkg():
