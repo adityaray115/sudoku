@@ -163,7 +163,6 @@ def newg():
     else:
         resetgrid(entry)
         newbuttonpressed()
-        counter_label(timer)
         fillGrid()
         for row in range(9):
             for col in range(9):
@@ -206,6 +205,7 @@ def newg():
                 for j in range(0,9):
                     entry[i][j].delete(0,END)
                     entry[i][j].insert(0,str(gridcopy[i][j]))
+        counter_label(timer)
         
 
 def saveg():
@@ -273,13 +273,14 @@ def resetg():
     messagebox.showwarning('Warning','Timer will not stop.')
     ans=messagebox.askyesno('Confirm','Are you sure you want to reset?')
     if ans==1:
-        resetgrid(entry)
-    else:
+        # resetgrid(entry)
         for row in range(9):
             for col in range(9):
                 if entry[row][col].cget('state')=='normal':
                     entry[row][col].delete(0,END)
                     entry[row][col].insert(0,'')
+    else:
+        pass
 
 def exitg():
     ex1=messagebox.askyesno('Warning','Any unsaved changes may be lost. Do you want to end the game?')
