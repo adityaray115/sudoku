@@ -55,7 +55,10 @@ def counter_label(timer):
             #tot_time=str(hour)+':'+str(minute)+':'+str(second)
             hour = minute = second = 0
             fillgridcheck=0
-            messagebox.showinfo('Message','Game completed.')    
+            messagebox.showinfo('Message','Game completed.')
+            resetgame['state']=DISABLED
+            checkgame['state']=DISABLED
+            solvegame['state']=DISABLED    
             return
         if(s==1 and m==1 and h==1):
             timer.config(text = '0'+str(hour)+':'+'0'+str(minute)+':'+'0'+str(second))
@@ -290,9 +293,9 @@ def solveg():
                 entry[row][col].insert(0,'')
     fillGrid()
     fillgridcheck = 1
-    resetgame['state']=DISABLED
+    '''resetgame['state']=DISABLED
     checkgame['state']=DISABLED
-    solvegame['state']=DISABLED
+    solvegame['state']=DISABLED'''
 
 def checkg():
     global fillgridcheck
