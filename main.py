@@ -270,7 +270,7 @@ def saveg():
     global tot_time
     global d
     d = diff.get()
-    sud=mysql.connector.connect(host='localhost',username='root',passwd='14Anku_Miku19',database='aniket')
+    sud=mysql.connector.connect(host='localhost',username='root',passwd='',database='')
     obj=sud.cursor()
     sql='insert into sudoku values(%s,%s,%s);'
     var=(name,tot_time,d)
