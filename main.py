@@ -11,14 +11,16 @@ rootwidth=1150
 rootheight=690
 root.minsize(rootwidth,rootheight)
 root.maxsize(rootwidth,rootheight)
-counter =1
+counter=1
 
 #variables
-counter =1
+counter=1
 name=''
 d=''
 tot_time='0:0:0'
 fillgridcheck=0
+autosolve=0
+endgame=0
 numberlist=list(range(1,10))
 numlist=['1','2','3','4','5','6','7','8','9','']
 
@@ -33,6 +35,8 @@ def counter_label(timer):
         global s,m,h
         global second,minute,hour
         global fillgridcheck
+        global autosolve
+        global endgame
         global tot_time
         second = second + 1
         if second < 10:
@@ -52,13 +56,19 @@ def counter_label(timer):
                     fillgridcheck = 1
                     messagebox.showinfo('Message','One day completed')
         if fillgridcheck==1:
-            #tot_time=str(hour)+':'+str(minute)+':'+str(second)
             hour = minute = second = 0
             fillgridcheck=0
+            if endgame==1:
+                endgame = 0
+                hour = minute = second = 0
+                return
+            if autosolve==1:
+                tot_time = 'AUTO SOLVE'
+                autosolve = 0
             messagebox.showinfo('Message','Game completed.')
             resetgame['state']=DISABLED
             checkgame['state']=DISABLED
-            solvegame['state']=DISABLED    
+            solvegame['state']=DISABLED
             return
         if(s==1 and m==1 and h==1):
             timer.config(text = '0'+str(hour)+':'+'0'+str(minute)+':'+'0'+str(second))
@@ -204,6 +214,10 @@ def newg():
     elif diff.get()=='SELECT':
         messagebox.showerror('Error','Difficulty level not selected.')
     else:
+        global name 
+        name=entryname.get()
+        global fillgridcheck
+        fillgridcheck=0
         resetgrid(entry)
         newbuttonpressed()
         fillGrid()
@@ -255,14 +269,15 @@ def saveg():
     global name
     global tot_time
     global d
-    sud=mysql.connector.connect(host='localhost',username='root',passwd='',database='')
+    d = diff.get()
+    sud=mysql.connector.connect(host='localhost',username='root',passwd='14Anku_Miku19',database='aniket')
     obj=sud.cursor()
     sql='insert into sudoku values(%s,%s,%s);'
     var=(name,tot_time,d)
     obj.execute(sql,var)
     obj.execute('commit;')
-    messagebox.showinfo('Saved','Your record has been saved.') 
-    for row in range(9):
+    messagebox.showinfo('Saved','Your record has been saved.')
+    '''for row in range(9):
         for col in range(9):
             if entry[row][col].cget('state')=='readonly':
                 mydb = mysql.connector.connect(
@@ -282,20 +297,21 @@ def saveg():
                 print("Done")
                 my_courser.execute("SELECT * FROM STUDENT")
                 for x in my_courser:
-                    print(x)
+                    print(x)'''
 
 def solveg():
-    global fillgridcheck
+    global fillgridcheck,autosolve
     for row in range(9):
         for col in range(9):
             if entry[row][col].cget('state')=='normal':
                 entry[row][col].delete(0,END)
                 entry[row][col].insert(0,'')
     fillGrid()
+    autosolve = 1
     fillgridcheck = 1
-    '''resetgame['state']=DISABLED
-    checkgame['state']=DISABLED
-    solvegame['state']=DISABLED'''
+    #resetgame['state']=DISABLED
+    #checkgame['state']=DISABLED
+    #solvegame['state']=DISABLED
 
 def checkg():
     global fillgridcheck
@@ -335,6 +351,10 @@ def exitg():
         if ex2==1:
             root.destroy()
         else:
+            global endgame
+            global fillgridcheck
+            fillgridcheck = 1
+            endgame = 1
             exitbuttonpressed()
             resetgrid(entry)
             disname.configure(text=entryname.get())
@@ -460,7 +480,6 @@ for i in range(9):
         canvas1.create_window(x+i*50,y+j*50,window=entry[i][j])
 
 root.mainloop()
-input('')
 
 #Aniket's Play Area using 
 # gridframe=Frame(mainframe,bg='blue')
