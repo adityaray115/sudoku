@@ -3,8 +3,7 @@ from tkinter import messagebox
 import numpy as np
 import random
 from numpy.random.mtrand import shuffle
-import sys
-# sys.setrecursionlimit(5000)
+import mysql.connector
 
 root=Tk()
 root.title('SUDOKU SOLVER')
@@ -13,6 +12,100 @@ rootheight=690
 root.minsize(rootwidth,rootheight)
 root.maxsize(rootwidth,rootheight)
 counter =1
+=======
+
+#variables
+counter=1
+name=''
+d=''
+tot_time='0:0:0'
+fillgridcheck=0
+autosolve=0
+endgame=0
+numberlist=list(range(1,10))
+numlist=['1','2','3','4','5','6','7','8','9','']
+
+#-----------TIMER-------------------------
+hour = minute = second = 0
+h = m = s = 0
+def counter_label(timer):
+    #global timer
+    hour = minute = second = 0
+    h = m = s = 0
+    def count():
+        global s,m,h
+        global second,minute,hour
+        global fillgridcheck
+        global autosolve
+        global endgame
+        global tot_time
+        second = second + 1
+        if second < 10:
+            s = 1
+        if minute < 10:
+            m = 1
+        if hour < 10:
+            h = 1
+        if second > 59:
+            minute = minute + 1
+            second = 0
+            if minute > 59:
+                hour = hour +1
+                second = 0
+                minute = 0
+                if hour > 23:
+                    fillgridcheck = 1
+                    messagebox.showinfo('Message','One day completed')
+        if fillgridcheck==1:
+            hour = minute = second = 0
+            fillgridcheck=0
+            if endgame==1:
+                endgame = 0
+                hour = minute = second = 0
+                return
+            if autosolve==1:
+                tot_time = 'AUTO SOLVE'
+                autosolve = 0
+            messagebox.showinfo('Message','Game completed.')
+            resetgame['state']=DISABLED
+            checkgame['state']=DISABLED
+            solvegame['state']=DISABLED
+            return
+        if(s==1 and m==1 and h==1):
+            timer.config(text = '0'+str(hour)+':'+'0'+str(minute)+':'+'0'+str(second))
+            tot_time = '0'+str(hour)+':'+'0'+str(minute)+':'+'0'+str(second)
+            h= m = s = 0
+        elif(s==0 and m==1 and h==1):
+            timer.config(text = '0'+str(hour)+':'+'0'+str(minute)+':'+str(second))
+            tot_time = '0'+str(hour)+':'+'0'+str(minute)+':'+str(second)
+            h = m = 0
+        elif(s==1 and m==0 and h==1):
+            timer.config(text = '0'+str(hour)+':'+str(minute)+':'+'0'+str(second))
+            tot_time = '0'+str(hour)+':'+str(minute)+':'+'0'+str(second)
+            h = s = 0
+        elif(s==0 and m==0 and h==1):
+            timer.config(text = '0'+str(hour)+':'+str(minute)+':'+str(second))
+            tot_time = '0'+str(hour)+':'+str(minute)+':'+str(second)
+            h = 0
+        elif(s==1 and m==1 and h==0):
+            timer.config(text = str(hour)+':'+'0'+str(minute)+':'+'0'+str(second))
+            tot_time = str(hour)+':'+'0'+str(minute)+':'+'0'+str(second)
+            m = s = 0
+        elif(s==0 and m==1 and h==0):
+            timer.config(text = str(hour)+':'+'0'+str(minute)+':'+str(second))
+            tot_time = str(hour)+':'+'0'+str(minute)+':'+str(second)
+            m =0
+        elif(s==1 and m==0 and h==0):
+            timer.config(text = str(hour)+':'+str(minute)+':'+'0'+str(second))
+            tot_time = str(hour)+':'+str(minute)+':'+'0'+str(second)
+            s = 0
+        else:
+            timer.config(text = str(hour)+':'+str(minute)+':'+str(second))
+            tot_time = str(hour)+':'+str(minute)+':'+str(second)
+        timer.after(1000,count)
+    count()
+#-----------
+
 def valid(x,y,n):
     for i in range(0,9):
         if entry[x][i].get()==str(n):
@@ -23,6 +116,19 @@ def valid(x,y,n):
     for i in range(x-x%3,x-x%3+3):
         for j in range(y-y%3,y-y%3+3):
             if entry[i][j].get()==str(n):
+                return False
+    return True
+
+def valid2(x,y,n):
+    for i in range(0,9):
+        if entry[x][i].get()==str(n) and y!=i:
+            return False
+    for i in range(0,9):
+        if entry[i][y].get()==str(n) and x!=i:
+            return False
+    for i in range(x-x%3,x-x%3+3):
+        for j in range(y-y%3,y-y%3+3):
+            if entry[i][j].get()==str(n) and x!=i and y!=j:
                 return False
     return True
 
@@ -109,9 +215,12 @@ def newg():
     elif diff.get()=='SELECT':
         messagebox.showerror('Error','Difficulty level not selected.')
     else:
+        global name 
+        name=entryname.get()
+        global fillgridcheck
+        fillgridcheck=0
         resetgrid(entry)
         newbuttonpressed()
-        counter_label(timer)
         fillGrid()
         for row in range(9):
             for col in range(9):
@@ -141,7 +250,6 @@ def newg():
                 for j in range(0,9):
                     l.append(entry[i][j].get())
                 gridcopy.append(l)
-
             #Count the number of solutions that this grid has (using a backtracking approach implemented in the solveGrid() function)
             counter=0
             solveGrid()   
@@ -155,29 +263,85 @@ def newg():
                 for j in range(0,9):
                     entry[i][j].delete(0,END)
                     entry[i][j].insert(0,str(gridcopy[i][j]))
-        print(diff.get())
-        while count>0:
-            row=random.randint(0,8)
-            col=random.randint(0,8)
-            if not entry[row][col].get()=='':
-                entry[row][col].delete(0,END)
-                entry[row][col].insert(0,str(''))
-                count-=1
+        counter_label(timer)
+        
 
 def saveg():
-    messagebox.showinfo('Message','SAVE pressed.')    
+    global name
+    global tot_time
+    global d
+    d = diff.get()
+    sud=mysql.connector.connect(host='localhost',username='root',passwd='',database='')
+    obj=sud.cursor()
+    sql='insert into sudoku values(%s,%s,%s);'
+    var=(name,tot_time,d)
+    obj.execute(sql,var)
+    obj.execute('commit;')
+    messagebox.showinfo('Saved','Your record has been saved.')
+    '''for row in range(9):
+        for col in range(9):
+            if entry[row][col].cget('state')=='readonly':
+                mydb = mysql.connector.connect(
+                    host="localhost",
+                    user="root",
+                    passwd="1234"
+                )
+                my_courser = mydb.cursor()
+                my_courser.execute("drop database if exists COLLEGE")
+                my_courser.execute("create database COLLEGE")
+                my_courser.execute("use college")
+                my_courser.execute("drop table if exists student")
+                my_courser.execute("CREATE TABLE STUDENT(First_NAME VARCHAR(70),Last_NAME VARCHAR(70),Address VARCHAR(70),City VARCHAR(70),AGE INTEGER(3));")
+                my_courser.execute("insert into student values('Mickey','Mouse','123 Fantasy Way','Anaheim',73)")
+                my_courser.execute("insert into student values('Bat','Man','321 Cavern Ave','Gotham',54)")
+                my_courser.execute("insert into student values('Wonder','Woman','987 Truth Way','Paradise',39)")
+                print("Done")
+                my_courser.execute("SELECT * FROM STUDENT")
+                for x in my_courser:
+                    print(x)'''
 
 def solveg():
+    global fillgridcheck,autosolve
+    for row in range(9):
+        for col in range(9):
+            if entry[row][col].cget('state')=='normal':
+                entry[row][col].delete(0,END)
+                entry[row][col].insert(0,'')
     fillGrid()
+    autosolve = 1
+    fillgridcheck = 1
+    #resetgame['state']=DISABLED
+    #checkgame['state']=DISABLED
+    #solvegame['state']=DISABLED
 
 def checkg():
-    messagebox.showinfo('Message','CHECK pressed.')
+    global fillgridcheck
+    for i in range(9):
+        for j in range(9):
+            num=entry[i][j].get()
+            if(num not in numlist):
+                messagebox.showerror('Error','Invalid entries are present.')
+                return
+            if(num==''):
+                messagebox.showwarning('Warning','Empty spaces are present.')
+                return
+            for row in range(9):
+                for col in range(9):
+                    if not valid2(row,col,entry[row][col].get()):
+                        messagebox.showerror('Error','Number is repeated')
+                        return                   
+    fillgridcheck=1
 
 def resetg():
     messagebox.showwarning('Warning','Timer will not stop.')
     ans=messagebox.askyesno('Confirm','Are you sure you want to reset?')
     if ans==1:
-        resetgrid(entry)
+        # resetgrid(entry)
+        for row in range(9):
+            for col in range(9):
+                if entry[row][col].cget('state')=='normal':
+                    entry[row][col].delete(0,END)
+                    entry[row][col].insert(0,'')
     else:
         pass
 
@@ -188,10 +352,15 @@ def exitg():
         if ex2==1:
             root.destroy()
         else:
+            global endgame
+            global fillgridcheck
+            fillgridcheck = 1
+            endgame = 1
             exitbuttonpressed()
             resetgrid(entry)
             disname.configure(text=entryname.get())
             diffright2.configure(text='')
+            timer.config(text='')
             username['state']=DISABLED
             time['state']=DISABLED
             diffright1['state']=DISABLED
@@ -235,6 +404,7 @@ def exitbuttonpressed():
 def resetgrid(entry):
     for i in range(9):
         for j in range(9):
+            entry[i][j].configure(state='normal')
             entry[i][j].delete(0,END)
 
 
@@ -257,6 +427,7 @@ namelabel.place(x=5,y=20)
 entryname=Entry(leftframe,width=15,font=('Arial',15),fg='red')
 entryname.place(x=125,y=20)
 difficulty=Label(leftframe,text='LEVEL:',bg='#F55E55',font=('Arial',15))
+
 difficulty.place(x=5,y=60)
 newgame=Button(leftframe,text='NEW GAME',fg='black',bg='#FEE134',font=('Arial',15),command=newg)
 newgame.place(x=90,y=300)
@@ -268,6 +439,7 @@ savegame=Button(leftframe,text='SAVE',fg='black',bg='#FEE134',font=('Arial',15),
 savegame.place(x=50,y=400)
 resetgame=Button(leftframe,text='RESET',fg='black',bg='#FEE134',font=('Arial',15),command=resetg)
 resetgame.place(x=170,y=400)
+
 exitgame=Button(leftframe,text='EXIT GAME',fg='black',bg='#FEE134',font=('Arial',15),command=exitg)
 exitgame.place(x=90,y=450)
 diff=StringVar()
@@ -342,7 +514,6 @@ for i in range(9):
         canvas1.create_window(x+i*50,y+j*50,window=entry[i][j])
 
 root.mainloop()
-input('')
 
 #Aniket's Play Area using 
 # gridframe=Frame(mainframe,bg='blue')
@@ -375,4 +546,3 @@ filemenu.add_command(label="Exit", command=root.quit)
 menubar.add_cascade(label="Options", menu=filemenu)
 root.config(menu=menubar)
 var=StringVar()'''
-s
