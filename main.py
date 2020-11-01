@@ -7,13 +7,10 @@ import mysql.connector
 
 root=Tk()
 root.title('SUDOKU SOLVER')
-'''rootwidth=1150
-rootheight=690
-root.minsize(rootwidth,rootheight)
-root.maxsize(rootwidth,rootheight)'''
 root.geometry('1150x690')
 root.resizable(width=False,height=False)
-counter=1
+root.maxsize(rootwidth,rootheight)
+counter =1
 
 #variables
 counter=1
@@ -377,9 +374,12 @@ def resetgrid(entry):
             entry[i][j].configure(state='normal')
             entry[i][j].delete(0,END)
 
+
 #Main Frame
 mainframe=Frame(root,bg='violet')
 mainframe.pack(expand=True,fill='both')
+
+
 
 #Title of the Application
 titleframe=Frame(mainframe,bg='pink')
@@ -388,12 +388,13 @@ title.pack()
 titleframe.pack(anchor=N,fill='x')
 
 #Interaction Area for User
-leftframe=Frame(mainframe,bg='light blue',width=300)
-namelabel=Label(leftframe,text='Enter Name:',bg='light blue',font=('Arial',15))
+leftframe=Frame(mainframe,bg='#F55E55',width=300)
+namelabel=Label(leftframe,text='NAME:',bg='#F55E55',font=('Arial',15))
 namelabel.place(x=5,y=20)
 entryname=Entry(leftframe,width=15,font=('Arial',15),fg='red')
 entryname.place(x=125,y=20)
-difficulty=Label(leftframe,text='Difficulty:',bg='light blue',font=('Arial',15))
+difficulty=Label(leftframe,text='LEVEL:',bg='#F55E55',font=('Arial',15))
+
 difficulty.place(x=5,y=60)
 newgame=Button(leftframe,text='NEW GAME',bg='light green',font=('Arial',15,'bold'),command=newg,bd=5)
 newgame.place(x=90,y=270)
@@ -415,24 +416,52 @@ diffselect.place(x=100,y=60)
 exitbuttonpressed()
 leftframe.pack(side=LEFT,fill='y')
 
+
 #Details display
-rightframe=Frame(mainframe,bg='light blue',width=300)
-username=Label(rightframe,text='Username:',bg='light blue',font=('Arial',15))
+rightframe=Frame(mainframe,bg='#F55E55',width=300)
+username=Label(rightframe,text='UERNAME:',fg='black', bg='#F55E55',font=('Arial',15))
 username.place(x=5,y=20)
-disname=Label(rightframe,bg='light blue',font=('Arial',15),fg='red')
+disname=Label(rightframe,bg='#F55E55',font=('Arial',15),fg='red')
 disname.place(x=105,y=20)
-diffright1=Label(rightframe,text='Difficulty:',bg='light blue',font=('Arial',15))
+diffright1=Label(rightframe,text='Difficulty:',bg='#F55E55',font=('Arial',15))
 diffright1.place(x=5,y=60)
-diffright2=Label(rightframe,bg='light blue',font=('Arial',15),fg='red')
+diffright2=Label(rightframe,bg='#F55E55',font=('Arial',15),fg='red')
 diffright2.place(x=90,y=60)
-time=Label(rightframe,text='Time:',bg='light blue',font=('Arial',15))
+time=Label(rightframe,text='Time:',bg='#F55E55',fg='black',font=('Arial',15))
 time.place(x=5,y=100)
-timer=Label(rightframe,bg='light blue',font=('Arial',15),fg='red')
-timer.place(x=70,y=100)
 username['state']=DISABLED
 time['state']=DISABLED
 diffright1['state']=DISABLED
 rightframe.pack(side=RIGHT,fill='y')
+
+
+
+##-----------TIMER-------------------------
+
+hour = minute = second = 0
+def counter_label(timer):
+    minute = 0
+    second = 0
+    def count():
+        global second
+        global minute
+        global hour
+        second = second + 1
+        if second > 59:
+            minute = minute + 1
+            second = 0
+            if minute > 59:
+                hour = hour +1
+                second=0
+        timer.config(text = str(hour)+':'+str(minute)+':'+str(second))
+        timer.after(1000,count)
+    count()
+
+    
+timer = Label(rightframe,bg='#F55E55',font=('Arial',15),fg='white')
+timer.place(x=80,y=100)
+counter_label(timer)
+#----------------------------
 
 #Play Area
 canvas1 = Canvas(mainframe, width = 455, height = 455, bd=1)
