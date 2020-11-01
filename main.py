@@ -7,10 +7,12 @@ import mysql.connector
 
 root=Tk()
 root.title('SUDOKU SOLVER')
-root.geometry('1150x690')
-root.resizable(width=False,height=False)
+rootwidth=1150
+rootheight=690
+root.minsize(rootwidth,rootheight)
 root.maxsize(rootwidth,rootheight)
 counter =1
+=======
 
 #variables
 counter=1
@@ -23,7 +25,7 @@ endgame=0
 numberlist=list(range(1,10))
 numlist=['1','2','3','4','5','6','7','8','9','']
 
-#--------------------------------TIMER-------------------------
+#-----------TIMER-------------------------
 hour = minute = second = 0
 h = m = s = 0
 def counter_label(timer):
@@ -55,12 +57,6 @@ def counter_label(timer):
                     fillgridcheck = 1
                     messagebox.showinfo('Message','One day completed')
         if fillgridcheck==1:
-            resetgame['state']=DISABLED
-            checkgame['state']=DISABLED
-            solvegame['state']=DISABLED
-            savegame['state']=DISABLED
-            diffselect['state']=ACTIVE
-            newgame['state']=ACTIVE 
             hour = minute = second = 0
             fillgridcheck=0
             if endgame==1:
@@ -71,6 +67,9 @@ def counter_label(timer):
                 tot_time = 'AUTO SOLVE'
                 autosolve = 0
             messagebox.showinfo('Message','Game completed.')
+            resetgame['state']=DISABLED
+            checkgame['state']=DISABLED
+            solvegame['state']=DISABLED
             return
         if(s==1 and m==1 and h==1):
             timer.config(text = '0'+str(hour)+':'+'0'+str(minute)+':'+'0'+str(second))
@@ -105,7 +104,7 @@ def counter_label(timer):
             tot_time = str(hour)+':'+str(minute)+':'+str(second)
         timer.after(1000,count)
     count()
-#-------------------------------------------------------------------------------
+#-----------
 
 def valid(x,y,n):
     for i in range(0,9):
@@ -143,6 +142,7 @@ def check_fill():
 numberlist=list(range(1,10))
 
 def fillGrid():
+    #   global counter
   #Find next empty cell
   for i in range(0,81):
     row=i//9
@@ -152,14 +152,21 @@ def fillGrid():
       for value in numberlist:
         value=str(value)
         #Check that this value has not already be used on this row
-        if valid(row,col,value):
-            entry[row][col].delete(0,END)
-            entry[row][col].insert(0,str(value))
-            if check_fill():
-                return True
-            else:
-                if fillGrid():
-                    return True
+        if not value in (entry[row][0].get(),entry[row][1].get(),entry[row][2].get(),entry[row][3].get(),entry[row][4].get(),entry[row][5].get(),entry[row][6].get(),entry[row][7].get(),entry[row][8].get()):
+            if not value in (entry[0][col].get(),entry[1][col].get(),entry[2][col].get(),entry[3][col].get(),entry[4][col].get(),entry[5][col].get(),entry[6][col].get(),entry[7][col].get(),entry[8][col].get()):
+                l=[]
+                for i in range(row-row%3,row-row%3+3):
+                    for j in range(col-col%3,col-col%3+3):
+                        l.append(entry[i][j].get())
+                #Check that this value has not already be used on this 3x3 square
+                if not value in l:
+                    entry[row][col].delete(0,END)
+                    entry[row][col].insert(0,str(value))
+                    if check_fill():
+                        return True
+                    else:
+                        if fillGrid():
+                            return True
       break
   entry[row][col].delete(0,END)        
   entry[row][col].insert(0,str(''))
@@ -219,9 +226,9 @@ def newg():
             for col in range(9):
                 entry[row][col].configure(state='readonly')
         count=0
-        if diff.get()=='EASY':count=30
-        elif diff.get()=='NORMAL':count=40
-        elif diff.get()=='HARD':count=50
+        if diff.get()=='EASY':count=40
+        elif diff.get()=='NORMAL':count=50
+        elif diff.get()=='HARD':count=60
         counter=1
         while count>0:
             # Select a random cell that is not already empty
@@ -257,22 +264,41 @@ def newg():
                     entry[i][j].delete(0,END)
                     entry[i][j].insert(0,str(gridcopy[i][j]))
         counter_label(timer)
-    
+        
+
 def saveg():
     global name
     global tot_time
     global d
     d = diff.get()
-    sud=mysql.connector.connect(host='localhost',username='root',passwd='1234')
+    sud=mysql.connector.connect(host='localhost',username='root',passwd='',database='')
     obj=sud.cursor()
-    obj.execute('create database if not exists sudoku')
-    obj.execute('use sudoku')
-    obj.execute('create table if not exists sudoku(NAME varchar(30),TIME varchar(30),DIFFICULTY varchar(20))')
     sql='insert into sudoku values(%s,%s,%s);'
     var=(name,tot_time,d)
     obj.execute(sql,var)
     obj.execute('commit;')
     messagebox.showinfo('Saved','Your record has been saved.')
+    '''for row in range(9):
+        for col in range(9):
+            if entry[row][col].cget('state')=='readonly':
+                mydb = mysql.connector.connect(
+                    host="localhost",
+                    user="root",
+                    passwd="1234"
+                )
+                my_courser = mydb.cursor()
+                my_courser.execute("drop database if exists COLLEGE")
+                my_courser.execute("create database COLLEGE")
+                my_courser.execute("use college")
+                my_courser.execute("drop table if exists student")
+                my_courser.execute("CREATE TABLE STUDENT(First_NAME VARCHAR(70),Last_NAME VARCHAR(70),Address VARCHAR(70),City VARCHAR(70),AGE INTEGER(3));")
+                my_courser.execute("insert into student values('Mickey','Mouse','123 Fantasy Way','Anaheim',73)")
+                my_courser.execute("insert into student values('Bat','Man','321 Cavern Ave','Gotham',54)")
+                my_courser.execute("insert into student values('Wonder','Woman','987 Truth Way','Paradise',39)")
+                print("Done")
+                my_courser.execute("SELECT * FROM STUDENT")
+                for x in my_courser:
+                    print(x)'''
 
 def solveg():
     global fillgridcheck,autosolve
@@ -284,21 +310,26 @@ def solveg():
     fillGrid()
     autosolve = 1
     fillgridcheck = 1
+    #resetgame['state']=DISABLED
+    #checkgame['state']=DISABLED
+    #solvegame['state']=DISABLED
 
 def checkg():
     global fillgridcheck
-    for row in range(9):
-        for col in range(9):
-            num=entry[row][col].get()
+    for i in range(9):
+        for j in range(9):
+            num=entry[i][j].get()
             if(num not in numlist):
                 messagebox.showerror('Error','Invalid entries are present.')
                 return
             if(num==''):
                 messagebox.showwarning('Warning','Empty spaces are present.')
                 return
-            if not valid2(row,col,entry[row][col].get()):
+            for row in range(9):
+                for col in range(9):
+                    if not valid2(row,col,entry[row][col].get()):
                         messagebox.showerror('Error','Number is repeated')
-                        return     
+                        return                   
     fillgridcheck=1
 
 def resetg():
@@ -340,6 +371,8 @@ def newbuttonpressed():
     messagebox.showinfo('Game','Lets Play.....'+entryname.get())
     disname.configure(text=entryname.get())
     diffright2.configure(text=diff.get())
+    entryname.delete(0,END)
+    # diff.set('SELECT')
     entryname['state']=DISABLED
     diffselect['state']=DISABLED
     namelabel['state']=DISABLED
@@ -376,14 +409,14 @@ def resetgrid(entry):
 
 
 #Main Frame
-mainframe=Frame(root,bg='violet')
+mainframe=Frame(root,bg='#FEE134')
 mainframe.pack(expand=True,fill='both')
 
 
 
 #Title of the Application
-titleframe=Frame(mainframe,bg='pink')
-title=Label(titleframe,text='SUDOKU',font=('arial black',70,'bold','underline'),fg='purple',bg='pink')
+titleframe=Frame(mainframe,bg='#FEE134')
+title=Label(titleframe,text='SUDOKU',font=('Montserrat',70),fg='black',bg='#FEE134')
 title.pack()
 titleframe.pack(anchor=N,fill='x')
 
@@ -396,17 +429,18 @@ entryname.place(x=125,y=20)
 difficulty=Label(leftframe,text='LEVEL:',bg='#F55E55',font=('Arial',15))
 
 difficulty.place(x=5,y=60)
-newgame=Button(leftframe,text='NEW GAME',bg='light green',font=('Arial',15,'bold'),command=newg,bd=5)
-newgame.place(x=90,y=270)
-checkgame=Button(leftframe,text='CHECK',bg='light green',font=('Arial',15,'bold'),command=checkg,bd=5)
-checkgame.place(x=170,y=330)
-solvegame=Button(leftframe,text='SOLVE',bg='light green',font=('Arial',15,'bold'),command=solveg,bd=5)
-solvegame.place(x=50,y=330)
-savegame=Button(leftframe,text='SAVE',bg='light green',font=('Arial',15,'bold'),command=saveg,bd=5)
-savegame.place(x=50,y=390)
-resetgame=Button(leftframe,text='RESET',bg='light green',font=('Arial',15,'bold'),command=resetg,bd=5)
-resetgame.place(x=170,y=390)
-exitgame=Button(leftframe,text='END GAME',bg='light green',font=('Arial',15,'bold'),command=exitg,bd=5)
+newgame=Button(leftframe,text='NEW GAME',fg='black',bg='#FEE134',font=('Arial',15),command=newg)
+newgame.place(x=90,y=300)
+checkgame=Button(leftframe,text='CHECK',fg='black',bg='#FEE134',font=('Arial',15),command=checkg)
+checkgame.place(x=170,y=350)
+solvegame=Button(leftframe,text='SOLVE',fg='black',bg='#FEE134',font=('Arial',15),command=solveg)
+solvegame.place(x=50,y=350)
+savegame=Button(leftframe,text='SAVE',fg='black',bg='#FEE134',font=('Arial',15),command=saveg)
+savegame.place(x=50,y=400)
+resetgame=Button(leftframe,text='RESET',fg='black',bg='#FEE134',font=('Arial',15),command=resetg)
+resetgame.place(x=170,y=400)
+
+exitgame=Button(leftframe,text='EXIT GAME',fg='black',bg='#FEE134',font=('Arial',15),command=exitg)
 exitgame.place(x=90,y=450)
 diff=StringVar()
 diff.set('SELECT')
@@ -464,7 +498,7 @@ counter_label(timer)
 #----------------------------
 
 #Play Area
-canvas1 = Canvas(mainframe, width = 455, height = 455, bd=1)
+canvas1 = Canvas(mainframe, width = 455, height = 455)
 canvas1.pack(pady=44)
 canvas1.create_line(155, 0,155,500)
 canvas1.create_line(305, 0,305,500)
@@ -480,3 +514,35 @@ for i in range(9):
         canvas1.create_window(x+i*50,y+j*50,window=entry[i][j])
 
 root.mainloop()
+
+#Aniket's Play Area using 
+# gridframe=Frame(mainframe,bg='blue')
+# for i in range(1,10):
+#     for j in range(1,10):
+#         count=1
+#         entry=Entry(gridframe,width=2,font=('arial balck',30),fg='red')
+#         entry.grid(row=i,column=j,padx=5,pady=5)
+#         j=j+1
+#         count=count+1
+#     i=i+1
+# gridframe.pack(side=TOP,pady=10)
+
+
+###Menu Code For Just in Case
+'''root.geometry('450x450')
+def empty():
+  pass
+menubar = Menu(root)
+filemenu = Menu(menubar, tearoff=0)
+filemenu.add_command(label="New Easy", command=empty)
+filemenu.add_command(label="New Medium", command=empty)
+filemenu.add_command(label="New Hard", command=empty)
+filemenu.add_separator()
+filemenu.add_command(label="Validate", command=empty)
+filemenu.add_command(label="Solve", command=empty)
+filemenu.add_separator()
+filemenu.add_command(label="Reset This Game", command=empty)
+filemenu.add_command(label="Exit", command=root.quit)
+menubar.add_cascade(label="Options", menu=filemenu)
+root.config(menu=menubar)
+var=StringVar()'''
