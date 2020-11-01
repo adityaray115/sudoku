@@ -7,10 +7,12 @@ import mysql.connector
 
 root=Tk()
 root.title('SUDOKU SOLVER')
-rootwidth=1150
+'''rootwidth=1150
 rootheight=690
 root.minsize(rootwidth,rootheight)
-root.maxsize(rootwidth,rootheight)
+root.maxsize(rootwidth,rootheight)'''
+root.geometry('1150x690')
+root.resizable(width=False,height=False)
 counter=1
 
 #variables
@@ -24,7 +26,7 @@ endgame=0
 numberlist=list(range(1,10))
 numlist=['1','2','3','4','5','6','7','8','9','']
 
-#-----------TIMER-------------------------
+#--------------------------------TIMER-------------------------
 hour = minute = second = 0
 h = m = s = 0
 def counter_label(timer):
@@ -55,6 +57,21 @@ def counter_label(timer):
                 if hour > 23:
                     fillgridcheck = 1
                     messagebox.showinfo('Message','One day completed')
+        if fillgridcheck==1:
+            resetgame['state']=DISABLED
+            checkgame['state']=DISABLED
+            solvegame['state']=DISABLED
+            hour = minute = second = 0
+            fillgridcheck=0
+            if endgame==1:
+                endgame = 0
+                hour = minute = second = 0
+                return
+            if autosolve==1:
+                tot_time = 'AUTO SOLVE'
+                autosolve = 0
+            messagebox.showinfo('Message','Game completed.')
+            return
         if(s==1 and m==1 and h==1):
             timer.config(text = '0'+str(hour)+':'+'0'+str(minute)+':'+'0'+str(second))
             tot_time = '0'+str(hour)+':'+'0'+str(minute)+':'+'0'+str(second)
@@ -86,24 +103,9 @@ def counter_label(timer):
         else:
             timer.config(text = str(hour)+':'+str(minute)+':'+str(second))
             tot_time = str(hour)+':'+str(minute)+':'+str(second)
-        if fillgridcheck==1:
-            hour = minute = second = 0
-            fillgridcheck=0
-            if endgame==1:
-                endgame = 0
-                hour = minute = second = 0
-                return
-            if autosolve==1:
-                tot_time = 'AUTO SOLVE'
-                autosolve = 0
-            messagebox.showinfo('Message','Game completed.')
-            resetgame['state']=DISABLED
-            checkgame['state']=DISABLED
-            solvegame['state']=DISABLED
-            return
         timer.after(1000,count)
     count()
-#-----------
+#-------------------------------------------------------------------------------
 
 def valid(x,y,n):
     for i in range(0,9):
@@ -147,7 +149,7 @@ def fillGrid():
     row=i//9
     col=i%9
     if entry[row][col].get()=='':
-      shuffle(numberlist)  
+    #   shuffle(numberlist)      
       for value in numberlist:
         value=str(value)
         #Check that this value has not already be used on this row
@@ -262,19 +264,18 @@ def newg():
                 for j in range(0,9):
                     entry[i][j].delete(0,END)
                     entry[i][j].insert(0,str(gridcopy[i][j]))
-        counter_label(timer)
-        
+        counter_label(timer)        
 
 def saveg():
     global name
     global tot_time
     global d
     d = diff.get()
-    sud=mysql.connector.connect(host='localhost',user='root',passwd='')
+    sud=mysql.connector.connect(host='localhost',username='root',passwd='')
     obj=sud.cursor()
     obj.execute('create database if not exists sudoku')
     obj.execute('use sudoku')
-    obj.execute('create table if not exists sudoku(name varchar(30),time varchar(30),difficuty varchar(20))')
+    obj.execute('create table if not exists sudoku(NAME varchar(30),TIME varchar(30),DIFFICULTY varchar(20))')
     sql='insert into sudoku values(%s,%s,%s);'
     var=(name,tot_time,d)
     obj.execute(sql,var)
@@ -307,7 +308,7 @@ def checkg():
                 for col in range(9):
                     if not valid2(row,col,entry[row][col].get()):
                         messagebox.showerror('Error','Number is repeated')
-                        return     
+                        return                   
     fillgridcheck=1
 
 def resetg():
@@ -385,35 +386,34 @@ def resetgrid(entry):
             entry[i][j].delete(0,END)
 
 #Main Frame
-mainframe=Frame(root,bg='#FEE134')
+mainframe=Frame(root,bg='violet')
 mainframe.pack(expand=True,fill='both')
 
 #Title of the Application
-titleframe=Frame(mainframe,bg='#FEE134')
-title=Label(titleframe,text='SUDOKU',font=('Montserrat',70),fg='black',bg='#FEE134')
+titleframe=Frame(mainframe,bg='pink')
+title=Label(titleframe,text='SUDOKU',font=('arial black',70,'bold','underline'),fg='purple',bg='pink')
 title.pack()
 titleframe.pack(anchor=N,fill='x')
 
 #Interaction Area for User
-leftframe=Frame(mainframe,bg='#F55E55',width=300)
-namelabel=Label(leftframe,text='Enter Name:',bg='#F55E55',font=('Arial',15))
+leftframe=Frame(mainframe,bg='light blue',width=300)
+namelabel=Label(leftframe,text='Enter Name:',bg='light blue',font=('Arial',15))
 namelabel.place(x=5,y=20)
 entryname=Entry(leftframe,width=15,font=('Arial',15),fg='red')
 entryname.place(x=125,y=20)
-difficulty=Label(leftframe,text='Difficulty:',bg='#F55E55',font=('Arial',15))
+difficulty=Label(leftframe,text='Difficulty:',bg='light blue',font=('Arial',15))
 difficulty.place(x=5,y=60)
-
-newgame=Button(leftframe,text='NEW GAME',fg='black',bg='#FEE134',font=('Arial',15),command=newg)
-newgame.place(x=90,y=300)
-checkgame=Button(leftframe,text='CHECK',fg='black',bg='#FEE134',font=('Arial',15),command=checkg)
-checkgame.place(x=170,y=350)
-solvegame=Button(leftframe,text='SOLVE',fg='black',bg='#FEE134',font=('Arial',15),command=solveg)
-solvegame.place(x=50,y=350)
-savegame=Button(leftframe,text='SAVE',fg='black',bg='#FEE134',font=('Arial',15),command=saveg)
-savegame.place(x=50,y=400)
-resetgame=Button(leftframe,text='RESET',fg='black',bg='#FEE134',font=('Arial',15),command=resetg)
-resetgame.place(x=170,y=400)
-exitgame=Button(leftframe,text='END GAME',fg='black',bg='#FEE134',font=('Arial',15),command=exitg)
+newgame=Button(leftframe,text='NEW GAME',bg='light green',font=('Arial',15,'bold'),command=newg,bd=5)
+newgame.place(x=90,y=270)
+checkgame=Button(leftframe,text='CHECK',bg='light green',font=('Arial',15,'bold'),command=checkg,bd=5)
+checkgame.place(x=170,y=330)
+solvegame=Button(leftframe,text='SOLVE',bg='light green',font=('Arial',15,'bold'),command=solveg,bd=5)
+solvegame.place(x=50,y=330)
+savegame=Button(leftframe,text='SAVE',bg='light green',font=('Arial',15,'bold'),command=saveg,bd=5)
+savegame.place(x=50,y=390)
+resetgame=Button(leftframe,text='RESET',bg='light green',font=('Arial',15,'bold'),command=resetg,bd=5)
+resetgame.place(x=170,y=390)
+exitgame=Button(leftframe,text='END GAME',bg='light green',font=('Arial',15,'bold'),command=exitg,bd=5)
 exitgame.place(x=90,y=450)
 diff=StringVar()
 diff.set('SELECT')
@@ -424,18 +424,18 @@ exitbuttonpressed()
 leftframe.pack(side=LEFT,fill='y')
 
 #Details display
-rightframe=Frame(mainframe,bg='#F55E55',width=300)
-username=Label(rightframe,text='Username:',bg='#F55E55',font=('Arial',15))
+rightframe=Frame(mainframe,bg='light blue',width=300)
+username=Label(rightframe,text='Username:',bg='light blue',font=('Arial',15))
 username.place(x=5,y=20)
-disname=Label(rightframe,bg='#F55E55',font=('Arial',15),fg='yellow')
+disname=Label(rightframe,bg='light blue',font=('Arial',15),fg='red')
 disname.place(x=105,y=20)
-diffright1=Label(rightframe,text='Difficulty:',bg='#F55E55',font=('Arial',15))
+diffright1=Label(rightframe,text='Difficulty:',bg='light blue',font=('Arial',15))
 diffright1.place(x=5,y=60)
-diffright2=Label(rightframe,bg='#F55E55',font=('Arial',15),fg='yellow')
+diffright2=Label(rightframe,bg='light blue',font=('Arial',15),fg='red')
 diffright2.place(x=90,y=60)
-time=Label(rightframe,text='Time:',bg='#F55E55',font=('Arial',15))
+time=Label(rightframe,text='Time:',bg='light blue',font=('Arial',15))
 time.place(x=5,y=100)
-timer=Label(rightframe,bg='#F55E55',font=('Arial',15),fg='yellow')
+timer=Label(rightframe,bg='light blue',font=('Arial',15),fg='red')
 timer.place(x=70,y=100)
 username['state']=DISABLED
 time['state']=DISABLED
@@ -443,7 +443,7 @@ diffright1['state']=DISABLED
 rightframe.pack(side=RIGHT,fill='y')
 
 #Play Area
-canvas1 = Canvas(mainframe, width = 455, height = 455)
+canvas1 = Canvas(mainframe, width = 455, height = 455, bd=1)
 canvas1.pack(pady=44)
 canvas1.create_line(155, 0,155,500)
 canvas1.create_line(305, 0,305,500)
