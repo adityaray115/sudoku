@@ -271,7 +271,7 @@ def saveg():
     global tot_time
     global d
     d = diff.get()
-    sud=mysql.connector.connect(host='localhost',username='root',passwd='14Anku_Miku19')
+    sud=mysql.connector.connect(host='localhost',username='root',passwd='')
     obj=sud.cursor()
     obj.execute('create database if not exists sudoku')
     obj.execute('use sudoku')
