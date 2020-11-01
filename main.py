@@ -270,7 +270,7 @@ def saveg():
     global tot_time
     global d
     d = diff.get()
-    sud=mysql.connector.connect(host='localhost',user='root',passwd='1234')
+    sud=mysql.connector.connect(host='localhost',user='root',passwd='')
     obj=sud.cursor()
     obj.execute('create database if not exists sudoku')
     obj.execute('use sudoku')
@@ -291,9 +291,6 @@ def solveg():
     fillGrid()
     autosolve = 1
     fillgridcheck = 1
-    #resetgame['state']=DISABLED
-    #checkgame['state']=DISABLED
-    #solvegame['state']=DISABLED
 
 def checkg():
     global fillgridcheck
@@ -353,7 +350,6 @@ def newbuttonpressed():
     disname.configure(text=entryname.get())
     diffright2.configure(text=diff.get())
     entryname.delete(0,END)
-    # diff.set('SELECT')
     entryname['state']=DISABLED
     diffselect['state']=DISABLED
     namelabel['state']=DISABLED
