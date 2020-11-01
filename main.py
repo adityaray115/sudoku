@@ -63,7 +63,7 @@ def counter_label(timer):
             solvegame['state']=DISABLED
             savegame['state']=DISABLED
             diffselect['state']=ACTIVE
-            newgame['state']=ACTIVE
+            newgame['state']=ACTIVE 
             hour = minute = second = 0
             fillgridcheck=0
             if endgame==1:
