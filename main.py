@@ -55,21 +55,6 @@ def counter_label(timer):
                 if hour > 23:
                     fillgridcheck = 1
                     messagebox.showinfo('Message','One day completed')
-        if fillgridcheck==1:
-            hour = minute = second = 0
-            fillgridcheck=0
-            if endgame==1:
-                endgame = 0
-                hour = minute = second = 0
-                return
-            if autosolve==1:
-                tot_time = 'AUTO SOLVE'
-                autosolve = 0
-            messagebox.showinfo('Message','Game completed.')
-            resetgame['state']=DISABLED
-            checkgame['state']=DISABLED
-            solvegame['state']=DISABLED
-            return
         if(s==1 and m==1 and h==1):
             timer.config(text = '0'+str(hour)+':'+'0'+str(minute)+':'+'0'+str(second))
             tot_time = '0'+str(hour)+':'+'0'+str(minute)+':'+'0'+str(second)
@@ -101,6 +86,21 @@ def counter_label(timer):
         else:
             timer.config(text = str(hour)+':'+str(minute)+':'+str(second))
             tot_time = str(hour)+':'+str(minute)+':'+str(second)
+        if fillgridcheck==1:
+            hour = minute = second = 0
+            fillgridcheck=0
+            if endgame==1:
+                endgame = 0
+                hour = minute = second = 0
+                return
+            if autosolve==1:
+                tot_time = 'AUTO SOLVE'
+                autosolve = 0
+            messagebox.showinfo('Message','Game completed.')
+            resetgame['state']=DISABLED
+            checkgame['state']=DISABLED
+            solvegame['state']=DISABLED
+            return
         timer.after(1000,count)
     count()
 #-----------
@@ -147,7 +147,7 @@ def fillGrid():
     row=i//9
     col=i%9
     if entry[row][col].get()=='':
-    #   shuffle(numberlist)      
+      shuffle(numberlist)  
       for value in numberlist:
         value=str(value)
         #Check that this value has not already be used on this row
@@ -270,34 +270,16 @@ def saveg():
     global tot_time
     global d
     d = diff.get()
-    sud=mysql.connector.connect(host='localhost',username='root',passwd='',database='')
+    sud=mysql.connector.connect(host='localhost',user='root',passwd='1234')
     obj=sud.cursor()
+    obj.execute('create database if not exists sudoku')
+    obj.execute('use sudoku')
+    obj.execute('create table if not exists sudoku(name varchar(30),time varchar(30),difficuty varchar(20))')
     sql='insert into sudoku values(%s,%s,%s);'
     var=(name,tot_time,d)
     obj.execute(sql,var)
     obj.execute('commit;')
     messagebox.showinfo('Saved','Your record has been saved.')
-    '''for row in range(9):
-        for col in range(9):
-            if entry[row][col].cget('state')=='readonly':
-                mydb = mysql.connector.connect(
-                    host="localhost",
-                    user="root",
-                    passwd="1234"
-                )
-                my_courser = mydb.cursor()
-                my_courser.execute("drop database if exists COLLEGE")
-                my_courser.execute("create database COLLEGE")
-                my_courser.execute("use college")
-                my_courser.execute("drop table if exists student")
-                my_courser.execute("CREATE TABLE STUDENT(First_NAME VARCHAR(70),Last_NAME VARCHAR(70),Address VARCHAR(70),City VARCHAR(70),AGE INTEGER(3));")
-                my_courser.execute("insert into student values('Mickey','Mouse','123 Fantasy Way','Anaheim',73)")
-                my_courser.execute("insert into student values('Bat','Man','321 Cavern Ave','Gotham',54)")
-                my_courser.execute("insert into student values('Wonder','Woman','987 Truth Way','Paradise',39)")
-                print("Done")
-                my_courser.execute("SELECT * FROM STUDENT")
-                for x in my_courser:
-                    print(x)'''
 
 def solveg():
     global fillgridcheck,autosolve
@@ -328,7 +310,7 @@ def checkg():
                 for col in range(9):
                     if not valid2(row,col,entry[row][col].get()):
                         messagebox.showerror('Error','Number is repeated')
-                        return                   
+                        return     
     fillgridcheck=1
 
 def resetg():
