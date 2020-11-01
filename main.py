@@ -61,6 +61,9 @@ def counter_label(timer):
             resetgame['state']=DISABLED
             checkgame['state']=DISABLED
             solvegame['state']=DISABLED
+            savegame['state']=DISABLED
+            diffselect['state']=ACTIVE
+            newgame['state']=ACTIVE
             hour = minute = second = 0
             fillgridcheck=0
             if endgame==1:
@@ -143,7 +146,6 @@ def check_fill():
 numberlist=list(range(1,10))
 
 def fillGrid():
-    #   global counter
   #Find next empty cell
   for i in range(0,81):
     row=i//9
@@ -153,21 +155,14 @@ def fillGrid():
       for value in numberlist:
         value=str(value)
         #Check that this value has not already be used on this row
-        if not value in (entry[row][0].get(),entry[row][1].get(),entry[row][2].get(),entry[row][3].get(),entry[row][4].get(),entry[row][5].get(),entry[row][6].get(),entry[row][7].get(),entry[row][8].get()):
-            if not value in (entry[0][col].get(),entry[1][col].get(),entry[2][col].get(),entry[3][col].get(),entry[4][col].get(),entry[5][col].get(),entry[6][col].get(),entry[7][col].get(),entry[8][col].get()):
-                l=[]
-                for i in range(row-row%3,row-row%3+3):
-                    for j in range(col-col%3,col-col%3+3):
-                        l.append(entry[i][j].get())
-                #Check that this value has not already be used on this 3x3 square
-                if not value in l:
-                    entry[row][col].delete(0,END)
-                    entry[row][col].insert(0,str(value))
-                    if check_fill():
-                        return True
-                    else:
-                        if fillGrid():
-                            return True
+        if valid(row,col,value):
+            entry[row][col].delete(0,END)
+            entry[row][col].insert(0,str(value))
+            if check_fill():
+                return True
+            else:
+                if fillGrid():
+                    return True
       break
   entry[row][col].delete(0,END)        
   entry[row][col].insert(0,str(''))
@@ -271,7 +266,7 @@ def saveg():
     global tot_time
     global d
     d = diff.get()
-    sud=mysql.connector.connect(host='localhost',username='root',passwd='')
+    sud=mysql.connector.connect(host='localhost',username='root',passwd='1234')
     obj=sud.cursor()
     obj.execute('create database if not exists sudoku')
     obj.execute('use sudoku')
@@ -295,20 +290,18 @@ def solveg():
 
 def checkg():
     global fillgridcheck
-    for i in range(9):
-        for j in range(9):
-            num=entry[i][j].get()
+    for row in range(9):
+        for col in range(9):
+            num=entry[row][col].get()
             if(num not in numlist):
                 messagebox.showerror('Error','Invalid entries are present.')
                 return
             if(num==''):
                 messagebox.showwarning('Warning','Empty spaces are present.')
                 return
-            for row in range(9):
-                for col in range(9):
-                    if not valid2(row,col,entry[row][col].get()):
+            if not valid2(row,col,entry[row][col].get()):
                         messagebox.showerror('Error','Number is repeated')
-                        return                   
+                        return     
     fillgridcheck=1
 
 def resetg():
@@ -350,7 +343,6 @@ def newbuttonpressed():
     messagebox.showinfo('Game','Lets Play.....'+entryname.get())
     disname.configure(text=entryname.get())
     diffright2.configure(text=diff.get())
-    entryname.delete(0,END)
     entryname['state']=DISABLED
     diffselect['state']=DISABLED
     namelabel['state']=DISABLED
