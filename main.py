@@ -227,9 +227,9 @@ def newg():
             for col in range(9):
                 entry[row][col].configure(state='readonly')
         count=0
-        if diff.get()=='EASY':count=40
-        elif diff.get()=='NORMAL':count=50
-        elif diff.get()=='HARD':count=60
+        if diff.get()=='EASY':count=30
+        elif diff.get()=='NORMAL':count=40
+        elif diff.get()=='HARD':count=50
         counter=1
         while count>0:
             # Select a random cell that is not already empty
@@ -264,8 +264,8 @@ def newg():
                 for j in range(0,9):
                     entry[i][j].delete(0,END)
                     entry[i][j].insert(0,str(gridcopy[i][j]))
-        counter_label(timer)        
-
+        counter_label(timer)
+    
 def saveg():
     global name
     global tot_time
@@ -459,35 +459,3 @@ for i in range(9):
         canvas1.create_window(x+i*50,y+j*50,window=entry[i][j])
 
 root.mainloop()
-
-#Aniket's Play Area using 
-# gridframe=Frame(mainframe,bg='blue')
-# for i in range(1,10):
-#     for j in range(1,10):
-#         count=1
-#         entry=Entry(gridframe,width=2,font=('arial balck',30),fg='red')
-#         entry.grid(row=i,column=j,padx=5,pady=5)
-#         j=j+1
-#         count=count+1
-#     i=i+1
-# gridframe.pack(side=TOP,pady=10)
-
-
-###Menu Code For Just in Case
-'''root.geometry('450x450')
-def empty():
-  pass
-menubar = Menu(root)
-filemenu = Menu(menubar, tearoff=0)
-filemenu.add_command(label="New Easy", command=empty)
-filemenu.add_command(label="New Medium", command=empty)
-filemenu.add_command(label="New Hard", command=empty)
-filemenu.add_separator()
-filemenu.add_command(label="Validate", command=empty)
-filemenu.add_command(label="Solve", command=empty)
-filemenu.add_separator()
-filemenu.add_command(label="Reset This Game", command=empty)
-filemenu.add_command(label="Exit", command=root.quit)
-menubar.add_cascade(label="Options", menu=filemenu)
-root.config(menu=menubar)
-var=StringVar()'''
